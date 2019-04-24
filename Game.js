@@ -1,8 +1,8 @@
 //Global variables
 var canvas = document.querySelector('canvas');
 var context = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth - 10;
+canvas.height = window.innerHeight - 10;
 
 //Directions
 var DIRECTION = {
@@ -17,13 +17,14 @@ var DIRECTION = {
 var Ball = {
     new: function(speed){
 		return{
-		width : 50,
-		height : 50,
-		x : 0,
-		y : 0,
+		width : 100,
+		height : 100,
+		x : canvas.width / 2,
+		y : canvas.height / 2,
 		moveX : DIRECTION.IDLE,
 		moveY : DIRECTION.IDLE, 
-		speed : speed || 10
+		speedY: speed || 10,
+		speedX: speed || 10
 		}
     }
 }
@@ -31,13 +32,13 @@ var Ball = {
 var Player = {
     new: function(side){
 		return{
-			width: 30,
-            height: 200,
+			width: 50,
+            height: 500,
 			//side === 'left' ? this.width : this.width - (2 * this.width)
-			x : side === 'left' ? 150 : canvas.width - 150,
+			x : side === 'left' ? 150 : canvas.width - 200,
 			//(canvas.width / 2) - (this.height / 2)
-            y : 50,
-            speed : 10,
+            y : canvas.height / 2 - 250,
+            speed : 20,
             score :0,
 			move : DIRECTION.IDLE
 		};
@@ -46,20 +47,52 @@ var Player = {
 
 var Game = {
     initialize: function(){
-        //initialize everything that needs to appear when the game is initialized
+		//initialize everything that needs to appear when the game is initialized
         this.player1 = Player.new.call(this,'left');
 		this.player2 = Player.new.call(this,'right');
 	
 
         this.running = this.over = false;
 
-        this.ball = Ball.new.call(this,5);
-
+        this.ball = Ball.new.call(this,25 );
+		
 		pong.listen();
-		pong.loop();
-    },
+		pong.menu();
+	},
+	menu: function () {
+		// Draw all the Pong objects in their current state
+		pong.draw();
+
+		// Change the canvas font size and color
+		context.font = '50px Courier New';
+		context.fillStyle = '#008000';
+
+		// Draw the rectangle behind the 'Press any key to begin' text.
+		context.fillRect(
+			canvas.width / 2 - 350,
+			canvas.height / 2 - 48,
+			700,
+			100
+		);
+
+		// Change the canvas color;
+		context.fillStyle = '#ffffff';
+
+		// Draw the 'press any key to begin' text
+		context.fillText('Press spacebar to begin the game',
+			canvas.width / 2,
+			canvas.height / 2 + 15
+		);
+
+	},
     update: function(){
-        //update 
+		//update 
+		if(!this.running){
+			this.ball.moveX = DIRECTION.RIGHT;
+			this.ball.moveY = DIRECTION.UP;
+			this.running = true;
+		}
+		this.ball.speedX+=0.01;
 		if(!this.over)
 		{
 			//Ball movement
@@ -69,6 +102,7 @@ var Game = {
 				this.ball.x = canvas.width/2;
 				this.ball.y = canvas.height/2;
 				this.ball.moveX = DIRECTION.LEFT;
+				this.ball.speedX = 25;
 			}
 			if (this.ball.x >= canvas.width - this.ball.width)
 			{
@@ -76,16 +110,17 @@ var Game = {
 				this.ball.x = canvas.width/2;
 				this.ball.y = canvas.height/2;
 				this.ball.moveX = DIRECTION.RIGHT;
+				this.ball.speedX = 25;
 			}
 			
 			if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
 			if (this.ball.y >= canvas.height - this.ball.height) this.ball.moveY = DIRECTION.UP;
 			
-			//Move ball
-			if (this.ball.moveY === DIRECTION.UP) this.ball.y -= (this.ball.speed / 1.5);
-			else if (this.ball.moveY === DIRECTION.DOWN) this.ball.y += (this.ball.speed / 1.5);
-			if (this.ball.moveX === DIRECTION.LEFT) this.ball.x -= this.ball.speed;
-			else if (this.ball.moveX === DIRECTION.RIGHT) this.ball.x += this.ball.speed;
+			//Move ball ---- this is not working
+			if (this.ball.moveY === DIRECTION.UP) this.ball.y -= (this.ball.speedY);
+			else if (this.ball.moveY === DIRECTION.DOWN) this.ball.y += (this.ball.speedY);
+			if (this.ball.moveX === DIRECTION.LEFT) this.ball.x -= this.ball.speedX;
+			else if (this.ball.moveX === DIRECTION.RIGHT) this.ball.x += this.ball.speedX;
 			
 			//Player movement
 			if (this.player1.move === DIRECTION.UP) this.player1.y -= this.player1.speed;
@@ -101,21 +136,19 @@ var Game = {
 			else if (this.player2.y >= (canvas.height - this.player2.height)) this.player2.y = (canvas.height - this.player2.height);
 			
 			//Player1 Collision
-			if (this.ball.x - this.ball.width <= this.player1.x && this.ball.x >= this.player1.x - this.player1.width) {
+			if (this.ball.x >= this.player1.x && this.ball.x <= this.player1.x + this.player1.width) {
 				if (this.ball.y <= this.player1.y + this.player1.height && this.ball.y + this.ball.height >= this.player1.y) {
-					this.ball.x = (this.player1.x + this.ball.width);
 					this.ball.moveX = DIRECTION.RIGHT;
 				}
 			}
 			//Player2 Collision
-			if (this.ball.x - this.ball.width <= this.player2.x && this.ball.x >= this.player2.x - this.player2.width) {
+			if (this.ball.x + this.ball.width <= this.player2.x + this.player2.width && this.ball.x + this.ball.width >= this.player2.x) {
 				if (this.ball.y <= this.player2.y + this.player2.height && this.ball.y + this.ball.height >= this.player2.y) {
-					this.ball.x = (this.player2.x - this.ball.width);
 					this.ball.moveX = DIRECTION.LEFT;
 				}
 			}
 			
-			if(this.player1.score == 9 || this.player2.score == 9)
+			if(this.player1.score == 5 || this.player2.score == 5)
 			{
 				this.running = false;
 				this.over = true;
@@ -125,24 +158,34 @@ var Game = {
     },
     draw: function(){
 		//draw the objects 
+
+		//clear canvas
 		context.clearRect(0, 0, canvas.width, canvas.height);
+		
+		//draw background
 		context.fillStyle = '#000000';
 		context.fillRect(0, 0, canvas.width, canvas.height);
+		
+		//set the color of the fillStyle to white
 		context.fillStyle = '#FFFFFF';
-		context.beginPath();
+
+		//draw the elements
 		context.fillRect(this.player1.x,this.player1.y, this.player1.width, this.player1.height);
-		context.fill()
-		context.fillRect(this.player2.x, this.player2.y, 30, 1000);
+		context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
 		context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
+
+		//this is not working
+		for(var i=0; i< canvas.width ; i+= 50){
+			context.fillStyle = '#FFFFFF';
+			context.fillRect(canvas.width/2, i, 25, 25);
+		}
 		
-		
-		for(var i=0; i< canvas.innerWidth ; i+= 25)
-		c.fillRect(canvas.width/2, i, 25, 25);
-		
-		this.drawNum(this.player1.score, canvas.width/2 - 3*25, 25, 15);
-		this.drawNum(this.player2.score, canvas.width/2 + 2*25, 25, 15);
+		//update the score
+		this.drawNum(this.player1.score, canvas.width/2 - 4*50, 25, 50);
+		this.drawNum(this.player2.score, canvas.width/2 + 1.5*50, 25, 50);
     },
     loop: function(){
+		//keep the events running
         pong.update();
         pong.draw();
 
@@ -150,36 +193,53 @@ var Game = {
             requestAnimationFrame(pong.loop);
     },
     listen: function(){
+		//listen the pressed keys
         document.addEventListener('keydown',function(key){
-            
-            if(this.running === false){
-                this.running = true;
-                window.requestAnimationFrame(this.loop);
-            }
+			
 
             //keys for player 1
-            if(key.keyCode === 38){
+            if(key.keyCode === 87){
                 pong.player1.move = DIRECTION.UP;
             }
-            if(key.keyCode == 40){
+            if(key.keyCode == 83){
                 pong.player1.move = DIRECTION.DOWN;
             }
 
             //keys for player 2
-            if(key.keyCode == 87){
+            if(key.keyCode == 38){
                 pong.player2.move = DIRECTION.UP;
             }
-            if(key.keyCode == 83){
+            if(key.keyCode == 40){
                 pong.player2.move =  DIRECTION.DOWN;
-            }
+			}
+			
+			//keys for menu
+			if(key.keyCode == 80){ //Pause (P)
+				if(pong.running)
+					pong.running = false;
+				else if(!pong.running)
+					pong.running = true;
+			}
+			if(key.keyCode == 32){//Start (spacebar)
+				if(!pong.running || pong.over)
+				{
+					pong.running = true;
+					pong.over = false;
+					
+					pong.loop();
+				}
+			} 
         });
 
         document.addEventListener('keyup',function(key){ 
-            pong.player1.move = DIRECTION.IDLE
-            pong.player2.move = DIRECTION.IDLE});
+            if(key.keyCode == 38 || key.keyCode == 40)
+            pong.player2.move = DIRECTION.IDLE
+            if(key.keyCode == 87 || key.keyCode == 83)
+            pong.player1.move = DIRECTION.IDLE});
     },
 	
 	drawNum: function(num, x, y, tam){
+		//draw the score numbers
 		switch(num){
 		case 0:
 			for(var i=y; i < y+5*tam; i+=tam)
