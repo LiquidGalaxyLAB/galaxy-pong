@@ -51,20 +51,20 @@ var Game = {
         this.player1 = Player.new.call(this,'left');
 		this.player2 = Player.new.call(this,'right');
 	
-
         this.running = this.over = false;
 
         this.ball = Ball.new.call(this,25 );
 		
 		pong.listen();
 		pong.menu();
+		pong.loop();
 	},
 	menu: function () {
 		// Draw all the Pong objects in their current state
 		pong.draw();
-
+		var boxW = 500
 		// Change the canvas font size and color
-		context.font = '50px Courier New';
+		context.font = '100px Courier New';
 		context.fillStyle = '#008000';
 
 		// Draw the rectangle behind the 'Press any key to begin' text.
@@ -181,8 +181,13 @@ var Game = {
     },
     loop: function(){
 		//keep the events running
-        pong.update();
-        pong.draw();
+		pong.update();
+		if(pong.running)
+        	pong.draw();
+		else
+		{
+			pong.menu();
+		}
 
         if(!this.over) //if the game is not over, keep repeating
             requestAnimationFrame(pong.loop);
@@ -224,8 +229,9 @@ var Game = {
 					pong.ball.moveY = DIRECTION.UP;
 					pong.player1.score = 0;
 					pong.player2.score = 0;
+					pong.ball.x = canvas.width/2;
+					pong.ball.y = canvas.height/2;
 					pong.ball.speed = 25;
-					pong.loop();
 				}
 			} 
         });
