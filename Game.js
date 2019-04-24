@@ -87,14 +87,10 @@ var Game = {
 	},
     update: function(){
 		//update 
-		if(!this.running){
-			this.ball.moveX = DIRECTION.RIGHT;
-			this.ball.moveY = DIRECTION.UP;
-			this.running = true;
-		}
-		this.ball.speedX+=0.01;
-		if(!this.over)
+		
+		if(!this.over && this.running)
 		{
+			this.ball.speedX+=0.01;
 			//Ball movement
 			if (this.ball.x <= 0) 
 			{
@@ -154,7 +150,6 @@ var Game = {
 				this.over = true;
 			}
 		}
-        
     },
     draw: function(){
 		//draw the objects 
@@ -225,7 +220,11 @@ var Game = {
 				{
 					pong.running = true;
 					pong.over = false;
-					
+					pong.ball.moveX = DIRECTION.RIGHT;
+					pong.ball.moveY = DIRECTION.UP;
+					pong.player1.score = 0;
+					pong.player2.score = 0;
+					pong.ball.speed = 25;
 					pong.loop();
 				}
 			} 
