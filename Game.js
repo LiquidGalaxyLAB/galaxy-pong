@@ -246,8 +246,8 @@ var Game = {
 		}
 
 		//update the score
-		numPos1 = (maxRes/2 - 3.5   * 50) - (screenRes * (screenNumber -1))
-		numPos2 = (maxRes/2 - 0.0001 * 50) - (screenRes * (screenNumber -1))
+		numPos1 = (maxRes/2 - 4   * 50) - (screenRes * (screenNumber -1))
+		numPos2 = (maxRes/2 + 1.5 * 50) - (screenRes * (screenNumber -1))
 		this.drawNum(this.player1.score, numPos1, 25, 50);
 		this.drawNum(this.player2.score, numPos2, 25, 50);
     },
