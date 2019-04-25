@@ -63,6 +63,9 @@ io.on('connection', function(socket){
     io.emit("play")
   })
 
+  socket.on("pause", function(msg){
+    io.emit("pause",msg)
+  })
 
   //io.emit('updateNScreens', {nScreens : nScreens , maxRes : maxRes})
 
@@ -84,6 +87,6 @@ io.on('connection', function(socket){
 });
 
 
-http.listen(8111,function(){
+http.listen(8080,function(){
 	console.log('listen on ports: 8080');
 });
