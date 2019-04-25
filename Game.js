@@ -1,8 +1,24 @@
 //Global variables
+var socket = io();
+
 var canvas = document.querySelector('canvas');
 var context = canvas.getContext('2d');
-canvas.width = window.innerWidth - 10;
-canvas.height = window.innerHeight - 10;
+screenRes = window.innerWidth - 7;
+canvas.width = screenRes;
+canvas.height = window.innerHeight - 7;
+var ballX
+var ballY
+var pong;
+var player2X;
+// link vars
+
+
+////////////////////////////v
+var screenNumber;
+maxRes = screenRes;
+//
+
+
 
 //Directions
 var DIRECTION = {
@@ -22,7 +38,7 @@ var Ball = {
 		x : canvas.width / 2,
 		y : canvas.height / 2,
 		moveX : DIRECTION.IDLE,
-		moveY : DIRECTION.IDLE, 
+		moveY : DIRECTION.IDLE,
 		speedY: speed || 10,
 		speedX: speed || 10
 		}
@@ -35,7 +51,7 @@ var Player = {
 			width: 50,
             height: 500,
 			//side === 'left' ? this.width : this.width - (2 * this.width)
-			x : side === 'left' ? 150 : canvas.width - 200,
+			x : side === 'left' ? 50 : maxRes - 200,
 			//(canvas.width / 2) - (this.height / 2)
             y : canvas.height / 2 - 250,
             speed : 20,
@@ -50,14 +66,53 @@ var Game = {
 		//initialize everything that needs to appear when the game is initialized
         this.player1 = Player.new.call(this,'left');
 		this.player2 = Player.new.call(this,'right');
-	
+
         this.running = this.over = false;
 
         this.ball = Ball.new.call(this,25 );
-		
+
 		pong.listen();
 		pong.menu();
 		pong.loop();
+
+		//socket code////////////////////
+		socket.on('welcome',function(msg){
+			screenNumber = msg.nScreen
+			console.log("number of screens", msg.nScreens)
+			socket.emit("windowData", {screen : screenNumber, screenResolution : screenRes})
+		});
+
+		socket.on('updateNScreens',function(msg){
+			maxRes = msg.maxRes;
+			playerPosition = (maxRes) - 90;
+			playerPosition = (playerPosition - (screenRes * (screenNumber -1)))
+			console.log(playerPosition)
+			pong.player2.x = playerPosition;
+		});
+
+		socket.on("Goals",function(msg){
+			pong.player1.score = msg.player1
+			pong.player2.score = msg.player2
+		})
+
+		socket.on("play",function(){
+			pong.running = true;
+			pong.over = false;
+		})
+
+		socket.on('updateData',function(msg){
+
+			if(screenNumber != 1){
+				offset = (screenNumber - 1) * screenRes
+				ballX = msg.ballX - offset;
+				ballY = msg.ballY;
+				if(screenNumber != 1) pong.player2.y = msg.playerY
+			}
+		});
+
+
+
+
 	},
 	menu: function () {
 		// Draw all the Pong objects in their current state
@@ -78,7 +133,7 @@ var Game = {
 		// Change the canvas color;
 		context.fillStyle = '#ffffff';
 
-		// Draw the 'press any key to begin' text
+		// Draw the text
 		context.fillText('Press spacebar to begin the game',
 			canvas.width / 2,
 			canvas.height / 2 + 15
@@ -86,98 +141,115 @@ var Game = {
 
 	},
     update: function(){
-		//update 
-		
+		//update
+
 		if(!this.over && this.running)
 		{
-			this.ball.speedX+=0.01;
-			//Ball movement
-			if (this.ball.x <= 0) 
-			{
-				this.player2.score+=1;
-				this.ball.x = canvas.width/2;
-				this.ball.y = canvas.height/2;
-				this.ball.moveX = DIRECTION.LEFT;
-				this.ball.speedX = 25;
-			}
-			if (this.ball.x >= canvas.width - this.ball.width)
-			{
-				this.player1.score+=1;
-				this.ball.x = canvas.width/2;
-				this.ball.y = canvas.height/2;
-				this.ball.moveX = DIRECTION.RIGHT;
-				this.ball.speedX = 25;
-			}
-			
-			if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
-			if (this.ball.y >= canvas.height - this.ball.height) this.ball.moveY = DIRECTION.UP;
-			
-			//Move ball ---- this is not working
-			if (this.ball.moveY === DIRECTION.UP) this.ball.y -= (this.ball.speedY);
-			else if (this.ball.moveY === DIRECTION.DOWN) this.ball.y += (this.ball.speedY);
-			if (this.ball.moveX === DIRECTION.LEFT) this.ball.x -= this.ball.speedX;
-			else if (this.ball.moveX === DIRECTION.RIGHT) this.ball.x += this.ball.speedX;
-			
-			//Player movement
-			if (this.player1.move === DIRECTION.UP) this.player1.y -= this.player1.speed;
-			else if (this.player1.move === DIRECTION.DOWN) this.player1.y += this.player1.speed;
-			
-			if (this.player2.move === DIRECTION.UP) this.player2.y -= this.player2.speed;
-			else if (this.player2.move === DIRECTION.DOWN) this.player2.y += this.player2.speed;
-			
-			//Player movement limit
-			if (this.player1.y <= 0) this.player1.y = 0;
-			else if (this.player1.y >= (canvas.height - this.player1.height)) this.player1.y = (canvas.height - this.player1.height);
-			if (this.player2.y <= 0) this.player2.y = 0;
-			else if (this.player2.y >= (canvas.height - this.player2.height)) this.player2.y = (canvas.height - this.player2.height);
-			
-			//Player1 Collision
-			if (this.ball.x >= this.player1.x && this.ball.x <= this.player1.x + this.player1.width) {
-				if (this.ball.y <= this.player1.y + this.player1.height && this.ball.y + this.ball.height >= this.player1.y) {
-					this.ball.moveX = DIRECTION.RIGHT;
-				}
-			}
-			//Player2 Collision
-			if (this.ball.x + this.ball.width <= this.player2.x + this.player2.width && this.ball.x + this.ball.width >= this.player2.x) {
-				if (this.ball.y <= this.player2.y + this.player2.height && this.ball.y + this.ball.height >= this.player2.y) {
+			if(screenNumber == 1){
+				this.ball.speedX+=0.01;
+				//Ball movement
+				if (this.ball.x <= 0)
+				{
+					this.player2.score+=1;
+					this.ball.x = canvas.width/2;
+					this.ball.y = canvas.height/2;
 					this.ball.moveX = DIRECTION.LEFT;
+					this.ball.speedX = 25;
+					socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
 				}
+					//goal player 1, wall = canvas.width
+					if (this.ball.x >= maxRes - this.ball.width)
+					{
+						this.player1.score+=1;
+						this.ball.x = canvas.width/2;
+						this.ball.y = canvas.height/2;
+						this.ball.moveX = DIRECTION.RIGHT;
+						this.ball.speedX = 25;
+						socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
+					}
+
+					if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
+					if (this.ball.y >= canvas.height - this.ball.height) this.ball.moveY = DIRECTION.UP;
+
+					//Move ball
+					if (this.ball.moveY === DIRECTION.UP) this.ball.y -= (this.ball.speedY);
+					else if (this.ball.moveY === DIRECTION.DOWN) this.ball.y += (this.ball.speedY);
+					if (this.ball.moveX === DIRECTION.LEFT) this.ball.x -= this.ball.speedX;
+					else if (this.ball.moveX === DIRECTION.RIGHT) this.ball.x += this.ball.speedX;
+
+					//Player movement
+					if (this.player1.move === DIRECTION.UP) this.player1.y -= this.player1.speed;
+					else if (this.player1.move === DIRECTION.DOWN) this.player1.y += this.player1.speed;
+
+					if (this.player2.move === DIRECTION.UP) this.player2.y -= this.player2.speed;
+					else if (this.player2.move === DIRECTION.DOWN) this.player2.y += this.player2.speed;
+
+					//Player movement limit
+					if (this.player1.y <= 0) this.player1.y = 0;
+					else if (this.player1.y >= (canvas.height - this.player1.height)) this.player1.y = (canvas.height - this.player1.height);
+					if (this.player2.y <= 0) this.player2.y = 0;
+					else if (this.player2.y >= (canvas.height - this.player2.height)) this.player2.y = (canvas.height - this.player2.height);
+
+					//Player1 Collision
+					if (this.ball.x >= this.player1.x && this.ball.x <= this.player1.x + this.player1.width) {
+						if (this.ball.y <= this.player1.y + this.player1.height && this.ball.y + this.ball.height >= this.player1.y) {
+							this.ball.moveX = DIRECTION.RIGHT;
+						}
+					}
+					//Player2 Collision
+					if (this.ball.x + this.ball.width <= this.player2.x + this.player2.width && this.ball.x + this.ball.width >= this.player2.x) {
+						if (this.ball.y <= this.player2.y + this.player2.height && this.ball.y + this.ball.height >= this.player2.y) {
+							this.ball.moveX = DIRECTION.LEFT;
+						}
+					}
+
+					if(this.player1.score == 5 || this.player2.score == 5)
+					{
+						this.running = false;
+						this.over = true;
+					}
+			}else{
+				this.ball.x = ballX;
+				this.ball.y = ballY;
 			}
-			
-			if(this.player1.score == 5 || this.player2.score == 5)
-			{
-				this.running = false;
-				this.over = true;
-			}
+			if(screenNumber == 1) socket.emit("updateData", {ballX: this.ball.x, ballY: this.ball.y, playerX: this.player2.x, playerY: this.player2.y})
 		}
     },
     draw: function(){
-		//draw the objects 
+		//draw the objects
 
 		//clear canvas
 		context.clearRect(0, 0, canvas.width, canvas.height);
-		
+
 		//draw background
 		context.fillStyle = '#000000';
 		context.fillRect(0, 0, canvas.width, canvas.height);
-		
+
 		//set the color of the fillStyle to white
 		context.fillStyle = '#FFFFFF';
 
 		//draw the elements
-		context.fillRect(this.player1.x,this.player1.y, this.player1.width, this.player1.height);
+		if(screenNumber == 1) context.fillRect(this.player1.x,this.player1.y, this.player1.width, this.player1.height);
 		context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
-		context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
+		// revisaar!!!
+		if(screenNumber == 1) {
+			context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height)
+		}else{
+			context.fillRect(ballX, ballY, this.ball.width, this.ball.height)
+		}
 
-		//this is not working
+		linePos = (maxRes/2 - (screenRes * (screenNumber -1)))
 		for(var i=0; i< canvas.width ; i+= 50){
 			context.fillStyle = '#FFFFFF';
-			context.fillRect(canvas.width/2, i, 25, 25);
+
+			context.fillRect(linePos, i, 25, 25);
 		}
-		
+
 		//update the score
-		this.drawNum(this.player1.score, canvas.width/2 - 4*50, 25, 50);
-		this.drawNum(this.player2.score, canvas.width/2 + 1.5*50, 25, 50);
+		numPos1 = (maxRes/2 - 3.5   * 50) - (screenRes * (screenNumber -1))
+		numPos2 = (maxRes/2 - 0.0001 * 50) - (screenRes * (screenNumber -1))
+		this.drawNum(this.player1.score, numPos1, 25, 50);
+		this.drawNum(this.player2.score, numPos2, 25, 50);
     },
     loop: function(){
 		//keep the events running
@@ -195,7 +267,7 @@ var Game = {
     listen: function(){
 		//listen the pressed keys
         document.addEventListener('keydown',function(key){
-			
+
 
             //keys for player 1
             if(key.keyCode === 87){
@@ -212,7 +284,7 @@ var Game = {
             if(key.keyCode == 40){
                 pong.player2.move =  DIRECTION.DOWN;
 			}
-			
+
 			//keys for menu
 			if(key.keyCode == 80){ //Pause (P)
 				if(pong.running)
@@ -232,17 +304,18 @@ var Game = {
 					pong.ball.x = canvas.width/2;
 					pong.ball.y = canvas.height/2;
 					pong.ball.speed = 25;
+					socket.emit("play")
 				}
-			} 
+			}
         });
 
-        document.addEventListener('keyup',function(key){ 
+        document.addEventListener('keyup',function(key){
             if(key.keyCode == 38 || key.keyCode == 40)
             pong.player2.move = DIRECTION.IDLE
             if(key.keyCode == 87 || key.keyCode == 83)
             pong.player1.move = DIRECTION.IDLE});
     },
-	
+
 	drawNum: function(num, x, y, tam){
 		//draw the score numbers
 		switch(num){
@@ -326,7 +399,7 @@ var Game = {
 			context.fillRect(x+2*tam, y+tam, tam, tam);
 			context.fillRect(x, y+3*tam, tam, tam);
 			context.fillRect(x+2*tam, y+3*tam, tam, tam);
-			
+
 			break;
 		case 9:
 			for(var i=x; i < x+3*tam; i+=tam)
@@ -340,8 +413,8 @@ var Game = {
 			context.fillRect(x+2*tam, y+3*tam, tam, tam);
 			break;
 		}
-	
+
 	}
 }
-var pong =  Object.assign({},Game);
+pong =  Object.assign({},Game);
 pong.initialize();
