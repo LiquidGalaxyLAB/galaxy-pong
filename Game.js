@@ -10,6 +10,7 @@ var ballX
 var ballY
 var pong;
 var player2X;
+var pause = false;
 // link vars
 
 
@@ -117,27 +118,26 @@ var Game = {
 	menu: function () {
 		// Draw all the Pong objects in their current state
 		pong.draw();
-		var boxW = 500
+		
+		var boxW = 500;
+		var boxH = 100;
+		var boxX = canvas.width / 2 - (boxW / 2);
+		var boxY = canvas.height / 2 - 48;
+		
 		// Change the canvas font size and color
-		context.font = '100px Courier New';
-		context.fillStyle = '#008000';
-
-		// Draw the rectangle behind the 'Press any key to begin' text.
-		context.fillRect(
-			canvas.width / 2 - 350,
-			canvas.height / 2 - 48,
-			700,
-			100
-		);
+		context.font = 'bold 50px Courier new';
 
 		// Change the canvas color;
-		context.fillStyle = '#ffffff';
+		context.fillStyle = '#06ba12';
 
 		// Draw the text
-		context.fillText('Press spacebar to begin the game',
-			canvas.width / 2,
-			canvas.height / 2 + 15
-		);
+		if(pause){
+			context.fillText('SPACE TO RESTART',boxX + 40,boxY + 60);
+			context.fillText('P TO CONTINUE',boxX + 80,boxY + 120);
+		}
+		else
+			context.fillText('SPACE TO START',boxX + 40,boxY + 60);
+			
 
 	},
     update: function(){
@@ -287,8 +287,10 @@ var Game = {
 
 			//keys for menu
 			if(key.keyCode == 80){ //Pause (P)
-				if(pong.running)
+				if(pong.running){
 					pong.running = false;
+					pause = true;
+				}
 				else if(!pong.running)
 					pong.running = true;
 			}
