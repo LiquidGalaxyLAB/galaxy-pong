@@ -106,6 +106,10 @@ var Game = {
 			pause = msg;
 			if(pause)
 				pong.running = false;
+			else
+				pong.running = true;	
+
+			console.log(pause + " " + pong.running)
 		})
 
 		socket.on('updateData',function(msg){
@@ -298,7 +302,10 @@ var Game = {
 					pause = true;
 				}
 				else if(!pong.running)
+				{
 					pong.running = true;
+					pause = false;
+				}
 				socket.emit("pause", pause);
 			}
 			if(key.keyCode == 32){//Start (spacebar)
