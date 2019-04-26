@@ -66,6 +66,10 @@ io.on('connection', function(socket){
   socket.on("pause", function(msg){
     io.emit("pause",msg)
   })
+  
+  socket.on("fps", function(){
+    io.emit("fps")
+  })
 
   //io.emit('updateNScreens', {nScreens : nScreens , maxRes : maxRes})
 

@@ -11,6 +11,8 @@ var ballY
 var pong;
 var player2X;
 var pause = false;
+var fpsAnterior = 0;
+var showFPS = false;
 // link vars
 
 
@@ -79,7 +81,6 @@ var Game = {
 		//socket code////////////////////
 		socket.on('welcome',function(msg){
 			screenNumber = msg.nScreen
-			console.log("number of screens", msg.nScreens)
 			socket.emit("windowData", {screen : screenNumber, screenResolution : screenRes})
 		});
 
@@ -94,7 +95,6 @@ var Game = {
 		socket.on("Goals",function(msg){
 			pong.player1.score = msg.player1
 			pong.player2.score = msg.player2
-			console.log(pong.player1.score, pong.player2.score)
 		})
 
 		socket.on("play",function(){
@@ -112,6 +112,10 @@ var Game = {
 			console.log(pause + " " + pong.running)
 		})
 
+		socket.on("fps",function(){
+			showFPS = !showFPS;
+		})
+		
 		socket.on('updateData',function(msg){
 
 			if(screenNumber != 1){
@@ -152,7 +156,7 @@ var Game = {
 
 	},
     update: function(){
-		//update
+		
 		if(!this.over && this.running)
 		{
 			if(screenNumber == 1){
@@ -260,6 +264,16 @@ var Game = {
 		numPos2 = (maxRes/2 + 1.5 * 50) - (screenRes * (screenNumber -1))
 		this.drawNum(this.player1.score, numPos1, 25, 50);
 		this.drawNum(this.player2.score, numPos2, 25, 50);
+		
+		if(showFPS){
+			// Change the canvas font size and color
+			context.font = 'bold 12px Courier new';
+			context.fillStyle = '#06ba12';
+			
+			context.fillText('FPS: ' + 1/((performance.now() - fpsAnterior)/1000),10,20);
+			
+		}
+		fpsAnterior = performance.now();
     },
     loop: function(){
 		//keep the events running
@@ -314,6 +328,11 @@ var Game = {
 					pong.resetGame()
 					socket.emit("play")
 				}
+			}
+			
+			if(key.keyCode == 70){//Show FPS
+				//showFPS = !showFPS;
+				socket.emit("fps");
 			}
         });
 
