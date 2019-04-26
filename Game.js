@@ -36,8 +36,8 @@ var DIRECTION = {
 var Ball = {
     new: function(speed){
 		return{
-		width : 100,
-		height : 100,
+		width : 50,
+		height : 50,
 		x : canvas.width / 2,
 		y : canvas.height / 2,
 		moveX : DIRECTION.IDLE,
@@ -52,7 +52,7 @@ var Player = {
     new: function(side){
 		return{
 			width: 50,
-            height: 500,
+            height: 200, //
 			//side === 'left' ? this.width : this.width - (2 * this.width)
 			x : side === 'left' ? 50 : maxRes - 200,
 			//(canvas.width / 2) - (this.height / 2)
@@ -69,6 +69,8 @@ var Game = {
 		//initialize everything that needs to appear when the game is initialized
         this.player1 = Player.new.call(this,'left');
 		this.player2 = Player.new.call(this,'right');
+		this.player3 = Player.new.call(this,'left'); //
+		this.player4 = Player.new.call(this,'right'); //
 
         this.running = this.over = false;
 
@@ -90,6 +92,7 @@ var Game = {
 			playerPosition = (playerPosition - (screenRes * (screenNumber -1)))
 			console.log(playerPosition)
 			pong.player2.x = playerPosition;
+			pong.player4.x = playerPosition; //
 		});
 
 		socket.on("Goals",function(msg){
@@ -122,7 +125,10 @@ var Game = {
 				offset = (screenNumber - 1) * screenRes
 				ballX = msg.ballX - offset;
 				ballY = msg.ballY;
-				if(screenNumber != 1) pong.player2.y = msg.playerY
+				if(screenNumber != 1){
+					pong.player2.y = msg.playerY
+					pong.player4.y = msg.player4y
+				} 
 			}
 		});
 
@@ -198,12 +204,25 @@ var Game = {
 					if (this.player2.move === DIRECTION.UP) this.player2.y -= this.player2.speed;
 					else if (this.player2.move === DIRECTION.DOWN) this.player2.y += this.player2.speed;
 
+					if (this.player3.move === DIRECTION.UP) this.player3.y -= this.player3.speed;
+					else if (this.player3.move === DIRECTION.DOWN) this.player3.y += this.player3.speed; //
+
+					if (this.player4.move === DIRECTION.UP) this.player4.y -= this.player4.speed;
+					else if (this.player4.move === DIRECTION.DOWN) this.player4.y += this.player4.speed; //
+
 					//Player movement limit
 					if (this.player1.y <= 0) this.player1.y = 0;
 					else if (this.player1.y >= (canvas.height - this.player1.height)) this.player1.y = (canvas.height - this.player1.height);
+					
 					if (this.player2.y <= 0) this.player2.y = 0;
 					else if (this.player2.y >= (canvas.height - this.player2.height)) this.player2.y = (canvas.height - this.player2.height);
 
+					if (this.player3.y <= 0) this.player3.y = 0;
+					else if (this.player3.y >= (canvas.height - this.player3.height)) this.player3.y = (canvas.height - this.player3.height);
+
+					if (this.player4.y <= 0) this.player4.y = 0;
+					else if (this.player4.y >= (canvas.height - this.player4.height)) this.player4.y = (canvas.height - this.player4.height);
+					
 					//Player1 Collision
 					if (this.ball.x >= this.player1.x && this.ball.x <= this.player1.x + this.player1.width) {
 						if (this.ball.y <= this.player1.y + this.player1.height && this.ball.y + this.ball.height >= this.player1.y) {
@@ -213,6 +232,18 @@ var Game = {
 					//Player2 Collision
 					if (this.ball.x + this.ball.width <= this.player2.x + this.player2.width && this.ball.x + this.ball.width >= this.player2.x) {
 						if (this.ball.y <= this.player2.y + this.player2.height && this.ball.y + this.ball.height >= this.player2.y) {
+							this.ball.moveX = DIRECTION.LEFT;
+						}
+					}
+					//Player3 Collision
+					if (this.ball.x >= this.player3.x && this.ball.x <= this.player3.x + this.player3.width) {
+						if (this.ball.y <= this.player3.y + this.player3.height && this.ball.y + this.ball.height >= this.player3.y) {
+							this.ball.moveX = DIRECTION.RIGHT;
+						}
+					}
+					//Player4 Collision
+					if (this.ball.x + this.ball.width <= this.player4.x + this.player4.width && this.ball.x + this.ball.width >= this.player4.x) {
+						if (this.ball.y <= this.player4.y + this.player4.height && this.ball.y + this.ball.height >= this.player4.y) {
 							this.ball.moveX = DIRECTION.LEFT;
 						}
 					}
@@ -226,7 +257,7 @@ var Game = {
 				this.ball.x = ballX;
 				this.ball.y = ballY;
 			}
-			if(screenNumber == 1) socket.emit("updateData", {ballX: this.ball.x, ballY: this.ball.y, playerX: this.player2.x, playerY: this.player2.y})
+			if(screenNumber == 1) socket.emit("updateData", {ballX: this.ball.x, ballY: this.ball.y, playerX: this.player2.x,player4x: this.player4.x, playerY: this.player2.y, player4y:this.player4.y})
 		}
     },
     draw: function(){
@@ -243,8 +274,17 @@ var Game = {
 		context.fillStyle = '#FFFFFF';
 
 		//draw the elements
-		if(screenNumber == 1) context.fillRect(this.player1.x,this.player1.y, this.player1.width, this.player1.height);
+		if(screenNumber == 1){
+			context.fillStyle = '#06ba12';
+			context.fillRect(this.player1.x,this.player1.y, this.player1.width, this.player1.height);
+			context.fillStyle = '#FFFFFF';
+			context.fillRect(this.player3.x,this.player3.y,this.player3.width,this.player3.height); //
+		} 
+		context.fillStyle = '#06ba12';
 		context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
+		context.fillStyle = '#FFFFFF';
+		context.fillRect(this.player4.x,this.player4.y,this.player4.width,this.player4.height); //
+
 		// revisaar!!!
 		if(screenNumber == 1) {
 			context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height)
@@ -309,6 +349,22 @@ var Game = {
                 pong.player2.move =  DIRECTION.DOWN;
 			}
 
+			//keys for player 3
+            if(key.keyCode === 85){
+                pong.player3.move = DIRECTION.UP;
+            }
+            if(key.keyCode == 74){
+                pong.player3.move = DIRECTION.DOWN;
+			}
+
+			//keys for player 4
+            if(key.keyCode === 104){
+                pong.player4.move = DIRECTION.UP;
+            }
+            if(key.keyCode == 98){
+                pong.player4.move = DIRECTION.DOWN;
+			}
+			
 			//keys for menu
 			if(key.keyCode == 80){ //Pause (P)
 				if(pong.running){
@@ -337,10 +393,18 @@ var Game = {
         });
 
         document.addEventListener('keyup',function(key){
-            if(key.keyCode == 38 || key.keyCode == 40)
-            pong.player2.move = DIRECTION.IDLE
-            if(key.keyCode == 87 || key.keyCode == 83)
-            pong.player1.move = DIRECTION.IDLE});
+            if(key.keyCode == 85 || key.keyCode == 74)
+            pong.player3.move = DIRECTION.IDLE
+			
+			if(key.keyCode == 87 || key.keyCode == 83)
+			pong.player1.move = DIRECTION.IDLE
+			
+			if(key.keyCode == 38 || key.keyCode == 40)
+			pong.player2.move = DIRECTION.IDLE
+			
+			if(key.keyCode == 104 || key.keyCode == 98)
+            pong.player4.move = DIRECTION.IDLE
+		});
     },
 
 	resetGame: function()
