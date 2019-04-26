@@ -94,11 +94,13 @@ var Game = {
 		socket.on("Goals",function(msg){
 			pong.player1.score = msg.player1
 			pong.player2.score = msg.player2
+			console.log(pong.player1.score, pong.player2.score)
 		})
 
 		socket.on("play",function(){
 			pong.running = true;
 			pong.over = false;
+			pong.resetGame();
 		})
 		socket.on("pause", function(msg){
 			pause = msg;
@@ -147,7 +149,6 @@ var Game = {
 	},
     update: function(){
 		//update
-		console.log(pause);
 		if(!this.over && this.running)
 		{
 			if(screenNumber == 1){
@@ -303,15 +304,7 @@ var Game = {
 			if(key.keyCode == 32){//Start (spacebar)
 				if(!pong.running || pong.over)
 				{
-					pong.running = true;
-					pong.over = false;
-					pong.ball.moveX = DIRECTION.RIGHT;
-					pong.ball.moveY = DIRECTION.UP;
-					pong.player1.score = 0;
-					pong.player2.score = 0;
-					pong.ball.x = canvas.width/2;
-					pong.ball.y = canvas.height/2;
-					pong.ball.speed = 25;
+					pong.resetGame()
 					socket.emit("play")
 				}
 			}
@@ -324,6 +317,19 @@ var Game = {
             pong.player1.move = DIRECTION.IDLE});
     },
 
+	resetGame: function()
+	{
+		pong.running = true;
+		pong.over = false;
+		pong.ball.moveX = DIRECTION.RIGHT;
+		pong.ball.moveY = DIRECTION.UP;
+		pong.player1.score = 0;
+		pong.player2.score = 0;
+		pong.ball.x = canvas.width/2;
+		pong.ball.y = canvas.height/2;
+		pong.ball.speed = 25;
+	},
+	
 	drawNum: function(num, x, y, tam){
 		//draw the score numbers
 		switch(num){
