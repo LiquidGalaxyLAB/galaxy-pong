@@ -38,7 +38,7 @@ var Ball = {
 		return{
 		width : 50,
 		height : 50,
-		x : canvas.width / 2,
+		x : (maxRes / 2),
 		y : canvas.height / 2,
 		moveX : DIRECTION.IDLE,
 		moveY : DIRECTION.IDLE,
@@ -74,7 +74,7 @@ var Game = {
 
         this.running = this.over = false;
 
-        this.ball = Ball.new.call(this,25 );
+        this.ball = Ball.new.call(this,2 );
 
 		pong.listen();
 		pong.menu();
@@ -171,7 +171,7 @@ var Game = {
 				if (this.ball.x <= 0)
 				{
 					this.player2.score+=1;
-					this.ball.x = canvas.width/2;
+					this.ball.x = (maxRes/2) - (this.ball.width/2);
 					this.ball.y = canvas.height/2;
 					this.ball.moveX = DIRECTION.LEFT;
 					this.ball.speedX = 25;
@@ -181,7 +181,7 @@ var Game = {
 					if (this.ball.x >= maxRes - this.ball.width)
 					{
 						this.player1.score+=1;
-						this.ball.x = canvas.width/2;
+						this.ball.x = (maxRes/2) - (this.ball.width/2);
 						this.ball.y = canvas.height/2;
 						this.ball.moveX = DIRECTION.RIGHT;
 						this.ball.speedX = 25;
@@ -293,8 +293,9 @@ var Game = {
 		}
 
 		linePos = (maxRes/2 - (screenRes * (screenNumber -1)))
-		for(var i=0; i< canvas.width ; i+= 50){
-			context.fillStyle = '#FFFFFF';
+		context.fillStyle = '#FFFFFF';
+		
+		for(var i=0; i< canvas.height ; i+= 50){
 
 			context.fillRect(linePos, i, 25, 25);
 		}
@@ -415,7 +416,7 @@ var Game = {
 		pong.ball.moveY = DIRECTION.UP;
 		pong.player1.score = 0;
 		pong.player2.score = 0;
-		pong.ball.x = canvas.width/2;
+		pong.ball.x = (maxRes/2) - (pong.ball.width/2);
 		pong.ball.y = canvas.height/2;
 		pong.ball.speed = 25;
 	},
