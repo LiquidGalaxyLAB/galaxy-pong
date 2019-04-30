@@ -229,10 +229,10 @@ var Game = {
 							pong.ball.speedX = 17;
 							pong.ball.speedY = 12;
 						}
-						else if(pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[1][1]/100) 
-							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[1][0]/100)){
+						else if(pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[0][1]/100) 
+							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[0][0]/100)){
 							
-							pong.ball.moveY = DIRECTION.DOWN;
+							pong.ball.moveY = DIRECTION.UP;
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 25;
 							pong.ball.speedY = 25;
