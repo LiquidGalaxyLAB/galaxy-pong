@@ -59,7 +59,13 @@ var Player = {
             y : canvas.height / 2 - 250,
             speed : 20,
             score :0,
-			move : DIRECTION.IDLE
+			pushBall : side === 'left' ? DIRECTION.RIGHT : DIRECTION.LEFT,
+			
+			move : DIRECTION.IDLE,
+			
+			centro : [45,55],
+			meios : [[15,45],[55, 85]],
+			pontas : [[0,15],[85,100]]
 		};
 	},
 }
@@ -71,6 +77,8 @@ var Game = {
 		this.player2 = Player.new.call(this,'right');
 		this.player3 = Player.new.call(this,'left'); //
 		this.player4 = Player.new.call(this,'right'); //
+
+		this.players = [this.player1, this.player2, this.player3, this.player4]
 
         this.running = this.over = false;
 
@@ -90,7 +98,6 @@ var Game = {
 			maxRes = msg.maxRes;
 			playerPosition = (maxRes) - 90;
 			playerPosition = (playerPosition - (screenRes * (screenNumber -1)))
-			console.log(playerPosition)
 			pong.player2.x = playerPosition;
 			pong.player4.x = playerPosition; //
 		});
@@ -112,7 +119,6 @@ var Game = {
 			else
 				pong.running = true;	
 
-			console.log(pause + " " + pong.running)
 		})
 
 		socket.on("fps",function(){
@@ -162,11 +168,9 @@ var Game = {
 
 	},
     update: function(){
-		
 		if(!this.over && this.running)
 		{
 			if(screenNumber == 1){
-				this.ball.speedX+=0.01;
 				//Ball movement
 				if (this.ball.x <= 0)
 				{
@@ -177,83 +181,79 @@ var Game = {
 					this.ball.speedX = 25;
 					socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
 				}
-					//goal player 1, wall = canvas.width
-					if (this.ball.x >= maxRes - this.ball.width)
-					{
-						this.player1.score+=1;
-						this.ball.x = (maxRes/2) - (this.ball.width/2);
-						this.ball.y = canvas.height/2;
-						this.ball.moveX = DIRECTION.RIGHT;
-						this.ball.speedX = 25;
-						socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
-					}
+				//goal player 1, wall = canvas.width
+				if (this.ball.x >= maxRes - this.ball.width)
+				{
+					this.player1.score+=1;
+					this.ball.x = (maxRes/2) - (this.ball.width/2);
+					this.ball.y = canvas.height/2;
+					this.ball.moveX = DIRECTION.RIGHT;
+					this.ball.speedX = 25;
+					socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
+				}
 
-					if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
-					if (this.ball.y >= canvas.height - this.ball.height) this.ball.moveY = DIRECTION.UP;
-
-					//Move ball
-					if (this.ball.moveY === DIRECTION.UP) this.ball.y -= (this.ball.speedY);
-					else if (this.ball.moveY === DIRECTION.DOWN) this.ball.y += (this.ball.speedY);
-					if (this.ball.moveX === DIRECTION.LEFT) this.ball.x -= this.ball.speedX;
-					else if (this.ball.moveX === DIRECTION.RIGHT) this.ball.x += this.ball.speedX;
-
-					//Player movement
-					if (this.player1.move === DIRECTION.UP) this.player1.y -= this.player1.speed;
-					else if (this.player1.move === DIRECTION.DOWN) this.player1.y += this.player1.speed;
-
-					if (this.player2.move === DIRECTION.UP) this.player2.y -= this.player2.speed;
-					else if (this.player2.move === DIRECTION.DOWN) this.player2.y += this.player2.speed;
-
-					if (this.player3.move === DIRECTION.UP) this.player3.y -= this.player3.speed;
-					else if (this.player3.move === DIRECTION.DOWN) this.player3.y += this.player3.speed; //
-
-					if (this.player4.move === DIRECTION.UP) this.player4.y -= this.player4.speed;
-					else if (this.player4.move === DIRECTION.DOWN) this.player4.y += this.player4.speed; //
-
-					//Player movement limit
-					if (this.player1.y <= 0) this.player1.y = 0;
-					else if (this.player1.y >= (canvas.height - this.player1.height)) this.player1.y = (canvas.height - this.player1.height);
+				if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
+				if (this.ball.y >= canvas.height - this.ball.height) this.ball.moveY = DIRECTION.UP;
+				//Move ball
+				if (this.ball.moveY === DIRECTION.UP) this.ball.y -= (this.ball.speedY);
+				else if (this.ball.moveY === DIRECTION.DOWN) this.ball.y += (this.ball.speedY);
+				if (this.ball.moveX === DIRECTION.LEFT) this.ball.x -= this.ball.speedX;
+				else if (this.ball.moveX === DIRECTION.RIGHT) this.ball.x += this.ball.speedX;
+				
+				this.players.forEach(function(playerAt){
+					if (playerAt.move === DIRECTION.UP) playerAt.y -= playerAt.speed;
+					else if (playerAt.move === DIRECTION.DOWN) playerAt.y += playerAt.speed;
 					
-					if (this.player2.y <= 0) this.player2.y = 0;
-					else if (this.player2.y >= (canvas.height - this.player2.height)) this.player2.y = (canvas.height - this.player2.height);
-
-					if (this.player3.y <= 0) this.player3.y = 0;
-					else if (this.player3.y >= (canvas.height - this.player3.height)) this.player3.y = (canvas.height - this.player3.height);
-
-					if (this.player4.y <= 0) this.player4.y = 0;
-					else if (this.player4.y >= (canvas.height - this.player4.height)) this.player4.y = (canvas.height - this.player4.height);
+					if (playerAt.y <= 0) playerAt.y = 0;
+					else if (playerAt.y >= (canvas.height - playerAt.height)) playerAt.y = (canvas.height - playerAt.height);
 					
-					//Player1 Collision
-					if (this.ball.x >= this.player1.x && this.ball.x <= this.player1.x + this.player1.width) {
-						if (this.ball.y <= this.player1.y + this.player1.height && this.ball.y + this.ball.height >= this.player1.y) {
-							this.ball.moveX = DIRECTION.RIGHT;
+					if (pong.ball.x + pong.ball.width >= playerAt.x && pong.ball.x <= playerAt.x + playerAt.width) {
+						if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.centro[1]/100) 
+							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.centro[0]/100)) {					
+							pong.ball.moveY = DIRECTION.IDLE;
+							pong.ball.moveX = playerAt.pushBall;
+							pong.ball.speedX = 10;
+						}
+						else if(pong.ball.y <= playerAt.y + playerAt.height * (playerAt.meios[0][1]/100) 
+							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.meios[0][0]/100)){						
+							pong.ball.moveY = DIRECTION.UP;
+							pong.ball.moveX = playerAt.pushBall;
+							pong.ball.speedX = 17;
+							pong.ball.speedY = 12;
+						}
+						else if(pong.ball.y <= playerAt.y + playerAt.height * (playerAt.meios[1][1]/100) 
+							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.meios[1][0]/100)){
+							
+							pong.ball.moveY = DIRECTION.DOWN;
+							pong.ball.moveX = playerAt.pushBall;
+							pong.ball.speedX = 17;
+							pong.ball.speedY = 12;
+						}
+						else if(pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[0][1]/100) 
+							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[0][0]/100)){
+							
+							pong.ball.moveY = DIRECTION.UP;
+							pong.ball.moveX = playerAt.pushBall;
+							pong.ball.speedX = 25;
+							pong.ball.speedY = 25;
+						}
+						else if(pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[1][1]/100) 
+							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[1][0]/100)){
+							
+							pong.ball.moveY = DIRECTION.DOWN;
+							pong.ball.moveX = playerAt.pushBall;
+							pong.ball.speedX = 25;
+							pong.ball.speedY = 25;
 						}
 					}
-					//Player2 Collision
-					if (this.ball.x + this.ball.width <= this.player2.x + this.player2.width && this.ball.x + this.ball.width >= this.player2.x) {
-						if (this.ball.y <= this.player2.y + this.player2.height && this.ball.y + this.ball.height >= this.player2.y) {
-							this.ball.moveX = DIRECTION.LEFT;
-						}
-					}
-					//Player3 Collision
-					if (this.ball.x >= this.player3.x && this.ball.x <= this.player3.x + this.player3.width) {
-						if (this.ball.y <= this.player3.y + this.player3.height && this.ball.y + this.ball.height >= this.player3.y) {
-							this.ball.moveX = DIRECTION.RIGHT;
-						}
-					}
-					//Player4 Collision
-					if (this.ball.x + this.ball.width <= this.player4.x + this.player4.width && this.ball.x + this.ball.width >= this.player4.x) {
-						if (this.ball.y <= this.player4.y + this.player4.height && this.ball.y + this.ball.height >= this.player4.y) {
-							this.ball.moveX = DIRECTION.LEFT;
-						}
-					}
-
-					if(this.player1.score == 5 || this.player2.score == 5)
-					{
-						this.running = false;
-						this.over = true;
-					}
-			}else{
+				})
+				if(this.player1.score == 5 || this.player2.score == 5)
+				{
+					this.running = false;
+					this.over = true;
+				}
+			}
+			else{
 				this.ball.x = ballX;
 				this.ball.y = ballY;
 			}
