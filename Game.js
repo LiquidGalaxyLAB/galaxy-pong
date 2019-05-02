@@ -50,8 +50,9 @@ var Ball = {
 }
 
 var Player = {
-    new: function(side){
+    new: function(side, numPaddle){
 		return{
+			id : numPaddle,
 			width: 50,
             height: 200, //
 			x : side === 'left' ? 50 : maxRes - 200,
@@ -72,16 +73,15 @@ var Player = {
 var Game = {
     initialize: function(){
 		//initialize everything that needs to appear when the game is initialized
-        this.player1 = Player.new.call(this,'left');
-		this.player2 = Player.new.call(this,'right');
-		this.player3 = Player.new.call(this,'left'); //
-		this.player4 = Player.new.call(this,'right'); //
-
-		this.players = [this.player1, this.player2, this.player3, this.player4]
-
+        this.player1 = Player.new.call(this,'left',1);
+		this.player2 = Player.new.call(this,'right',2);
+		this.player3 = Player.new.call(this,'left',3); //
+		this.player4 = Player.new.call(this,'right',4); //
+		
 		//change player3 and player4 position
 		this.player3.y = (this.player1.y + this.player1.height + 50);
 		this.player4.y = (this.player2.y + this.player2.height + 50);
+		this.players = [this.player1];
 
         this.running = this.over = false;
 
@@ -116,18 +116,11 @@ var Game = {
 			pong.resetGame();
 		})
 		socket.on("pause", function(msg){
-			console.log("Pause = " + pause + " Running = " + pong.running + " Over = " + pong.over)
-			if(!pong.running && !pong.over)
-			{
-				console.log("A");
-			}
-			else{
 				pause = msg;
 				if(pause)
 					pong.running = false;
 				else
 					pong.running = true;
-			}
 		})
 
 		socket.on("fps",function(){
@@ -138,15 +131,14 @@ var Game = {
 			pong.over = true;
 		})
 		socket.on('updateData',function(msg){
-
+			console.log(msg.playerCount);
 			if(screenNumber != 1){
 				offset = (screenNumber - 1) * screenRes
 				ballX = msg.ballX - offset;
 				ballY = msg.ballY;
-				if(screenNumber != 1){
-					pong.player2.y = msg.playerY
-					pong.player4.y = msg.player4y
-				} 
+				pong.player2.y = msg.playerY;
+				pong.player4.y = msg.player4y;
+				playercount = msg.playerCount;
 			}
 		});
 
@@ -220,7 +212,6 @@ var Game = {
 		}else{
 			this.players = [this.player1,this.player2,this.player3,this.player4];
 		}
-
 		if(this.over)
 		{
 			this.resetBall();
@@ -313,9 +304,10 @@ var Game = {
 				this.ball.x = ballX;
 				this.ball.y = ballY;
 			}
-			if(screenNumber == 1) 
-				socket.emit("updateData", {ballX: this.ball.x, ballY: this.ball.y, playerX: this.player2.x,player4x: this.player4.x, playerY: this.player2.y, player4y:this.player4.y})
-		}
+		}	
+		if(screenNumber == 1) 
+			socket.emit("updateData", {ballX: this.ball.x, ballY: this.ball.y, playerX: this.player2.x,player4x: this.player4.x, playerY: this.player2.y, player4y:this.player4.y, playerCount: playercount})
+		
     },
     draw: function(){
 		//draw the objects
@@ -333,8 +325,19 @@ var Game = {
 		////////
 	
 		this.players.forEach(function(playerAt){
-			context.fillStyle = '#FFFFFF';
-			context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
+			if(playerAt.id%2 != 0)
+			{
+				if(screenNumber == 1)
+				{
+					context.fillStyle = '#FFFFFF';
+					context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
+				}
+			}
+			else
+			{
+				context.fillStyle = '#FFFFFF';
+				context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
+			}
 		});
 
 		//draw the elements
