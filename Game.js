@@ -186,6 +186,18 @@ var Game = {
 		}
 	},
     update: function(){
+		//Set player count in the game
+		if(playercount == 1){
+			this.players = [this.player1];
+		}
+		else if(playercount == 2){
+			this.players = [this.player1,this.player2];
+		}else if(playercount == 3){
+			this.players = [this.player1,this.player2,this.player3];
+		}else{
+			this.players = [this.player1,this.player2,this.player3,this.player4];
+		}
+
 		if(!this.over && this.running)
 		{
 			if(screenNumber == 1){
@@ -275,7 +287,8 @@ var Game = {
 				this.ball.x = ballX;
 				this.ball.y = ballY;
 			}
-			if(screenNumber == 1) socket.emit("updateData", {ballX: this.ball.x, ballY: this.ball.y, playerX: this.player2.x,player4x: this.player4.x, playerY: this.player2.y, player4y:this.player4.y})
+			if(screenNumber == 1) 
+				socket.emit("updateData", {ballX: this.ball.x, ballY: this.ball.y, playerX: this.player2.x,player4x: this.player4.x, playerY: this.player2.y, player4y:this.player4.y})
 		}
     },
     draw: function(){
@@ -291,17 +304,24 @@ var Game = {
 		//set the color of the fillStyle to white
 		context.fillStyle = '#FFFFFF';
 
+		////////
+	
+		this.players.forEach(function(playerAt){
+			context.fillStyle = '#FFFFFF';
+			context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
+		});
+
 		//draw the elements
-		if(screenNumber == 1){
+		/*if(screenNumber == 1){
 			context.fillStyle = '#06ba12';
 			context.fillRect(this.player1.x,this.player1.y, this.player1.width, this.player1.height);
 			context.fillStyle = '#FFFFFF';
-			context.fillRect(this.player3.x,this.player3.y,this.player3.width,this.player3.height); //
+			context.fillRect(this.player3.x,this.player3.y,this.player3.width,this.player3.height); 
 		} 
 		context.fillStyle = '#06ba12';
 		context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
 		context.fillStyle = '#FFFFFF';
-		context.fillRect(this.player4.x,this.player4.y,this.player4.width,this.player4.height); //
+		context.fillRect(this.player4.x,this.player4.y,this.player4.width,this.player4.height); */
 
 		// revisaar!!!
 		if(screenNumber == 1) {
@@ -411,23 +431,23 @@ var Game = {
 			}
 
 			//keys for select player
-			if(key.keyCode == 49 || key.keyCode == 97){
-				if(!pong.running || pong.over){
+				if(key.keyCode == 49 || key.keyCode == 97){
+					if((!pong.running || pong.over) && !pause){
 					playercount = 1;
 				}
 			}
 			if(key.keyCode == 50 || key.keyCode == 98){
-				if(!pong.running || pong.over){
+				if((!pong.running || pong.over) && !pause){
 					playercount = 2;
 				}
 			}
 			if(key.keyCode == 51 || key.keyCode == 99){
-				if(!pong.running || pong.over){
+				if((!pong.running || pong.over) && !pause){
 					playercount = 3;
 				}
 			}
 			if(key.keyCode == 52 || key.keyCode == 100){
-				if(!pong.running || pong.over){
+				if((!pong.running || pong.over) && !pause){
 					playercount = 4;
 				}
 			}
@@ -443,7 +463,7 @@ var Game = {
 			if(key.keyCode == 38 || key.keyCode == 40)
 			pong.player2.move = DIRECTION.IDLE
 			
-			if(key.keyCode == 104 || key.keyCode == 98)
+			if(key.keyCode == 104 || key.keyCode == 101)
             pong.player4.move = DIRECTION.IDLE
 		});
     },
