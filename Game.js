@@ -443,7 +443,7 @@ var Game = {
 			if(key.keyCode == 38 || key.keyCode == 40)
 			pong.player2.move = DIRECTION.IDLE
 			
-			if(key.keyCode == 104 || key.keyCode == 98)
+			if(key.keyCode == 104 || key.keyCode == 101)
             pong.player4.move = DIRECTION.IDLE
 		});
     },
@@ -456,9 +456,14 @@ var Game = {
 		pong.ball.moveY = DIRECTION.UP;
 		pong.player1.score = 0;
 		pong.player2.score = 0;
+		pong.player1.y = canvas.height / 2 - 250;
+		pong.player2.y = canvas.height / 2 - 250;
+		pong.player3.y = (pong.player1.y + pong.player1.height + 50);
+		pong.player4.y = (pong.player2.y + pong.player2.height + 50);
 		pong.ball.x = (maxRes/2) - (pong.ball.width/2);
 		pong.ball.y = canvas.height/2;
 		pong.ball.speed = 25;
+		
 	},
 	
 	drawNum: function(num, x, y, tam){
