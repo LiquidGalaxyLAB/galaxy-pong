@@ -71,6 +71,9 @@ io.on('connection', function(socket){
     io.emit("fps")
   })
 
+  socket.on("GameOver", function(){
+    io.emit("GameOver")
+  })
   //io.emit('updateNScreens', {nScreens : nScreens , maxRes : maxRes})
 
   socket.on('disconnect', function(){
