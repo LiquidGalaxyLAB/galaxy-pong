@@ -54,9 +54,7 @@ var Player = {
 		return{
 			width: 50,
             height: 200, //
-			//side === 'left' ? this.width : this.width - (2 * this.width)
 			x : side === 'left' ? 50 : maxRes - 200,
-			//(canvas.width / 2) - (this.height / 2)
             y : canvas.height / 2 - 250,
             speed : 20,
             score :0,
@@ -129,7 +127,10 @@ var Game = {
 		socket.on("fps",function(){
 			showFPS = !showFPS;
 		})
-		
+		socket.on("GameOver",function(){
+			pong.running = false;
+			pong.over = true;
+		})
 		socket.on('updateData',function(msg){
 
 			if(screenNumber != 1){
@@ -161,10 +162,21 @@ var Game = {
 		
 		// Draw the text
 		if(pause){
-			context.fillText('SPACE TO RESTART',boxX + 40,boxY + 60);
-			context.fillText('P TO CONTINUE',boxX + 80,boxY + 120);
+			if(screenNumber == 1)
+			{
+				context.fillText('SPACE TO RESTART',boxX + 40,boxY + 60);
+				context.fillText('P TO CONTINUE',boxX + 80,boxY + 120);
+			}
+			else
+			{
+				context.fillStyle = '#06ba12';
+				context.fillText('WAITING HOST',boxX + 40,boxY + 60);
+			}
 		}
 		else{
+			
+			if(screenNumber == 1)
+			{
 			context.fillText('Player count: ',boxX + 40,boxY) //
 			context.fillStyle = '#FFFFFF';
 			context.fillStyle = '#06ba12';
@@ -172,7 +184,12 @@ var Game = {
 			//setTimeout();
 			context.fillStyle = '#06ba12';
 			context.fillText('SPACE TO START',boxX + 40,boxY + 60);
-
+			}
+			else
+			{
+				context.fillStyle = '#06ba12';
+				context.fillText('WAITING HOST',boxX + 40,boxY + 60);
+			}
 			/*setTimeout(function(){ 
 				if(!bool){
 					context.fillStyle = '#FFFFFF';
@@ -261,8 +278,10 @@ var Game = {
 				})
 				if(this.player1.score == 5 || this.player2.score == 5)
 				{
+					this.resetGame();
 					this.running = false;
-					this.over = true;
+					this.pause = false;
+					socket.emit("GameOver");
 				}
 			}
 			else{
@@ -400,7 +419,6 @@ var Game = {
 			}
 			
 			if(key.keyCode == 70){//Show FPS
-				//showFPS = !showFPS;
 				socket.emit("fps");
 			}
 
@@ -458,7 +476,7 @@ var Game = {
 		pong.ball.x = (maxRes/2) - (pong.ball.width/2);
 		pong.ball.y = canvas.height/2;
 		pong.ball.speedX = this.randomInt(10,26);
-		pong.ball.speedY = this.randomInt(10,26);
+		pong.ball.speedY = this.	randomInt(10,26);
 		pong.ball.moveX = aux1 === 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
 		pong.ball.moveY = aux2 === 0 ? DIRECTION.UP : DIRECTION.DOWN;
 	},
