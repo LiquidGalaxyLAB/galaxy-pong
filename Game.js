@@ -276,12 +276,14 @@ var Game = {
 						}
 					}
 				})
-				if(this.player1.score == 5 || this.player2.score == 5)
+				if(this.player1.score == 9 || this.player2.score == 9)
 				{
 					this.resetGame();
 					this.running = false;
 					this.pause = false;
-					socket.emit("GameOver");
+					
+					if(screenNumber == 1)
+						socket.emit("GameOver");
 				}
 			}
 			else{
@@ -361,60 +363,64 @@ var Game = {
             requestAnimationFrame(pong.loop);
     },
     listen: function(){
+		
 		//listen the pressed keys
-        document.addEventListener('keydown',function(key){
+		document.addEventListener('keydown',function(key){
+			//keys for player 1
+			if(key.keyCode === 87){
+				pong.player1.move = DIRECTION.UP;
+			}
+			if(key.keyCode == 83){
+				pong.player1.move = DIRECTION.DOWN;
+			}
 
-
-            //keys for player 1
-            if(key.keyCode === 87){
-                pong.player1.move = DIRECTION.UP;
-            }
-            if(key.keyCode == 83){
-                pong.player1.move = DIRECTION.DOWN;
-            }
-
-            //keys for player 2
-            if(key.keyCode == 38){
-                pong.player2.move = DIRECTION.UP;
-            }
-            if(key.keyCode == 40){
-                pong.player2.move =  DIRECTION.DOWN;
+			//keys for player 2
+			if(key.keyCode == 38){
+				pong.player2.move = DIRECTION.UP;
+			}
+			if(key.keyCode == 40){
+				pong.player2.move =  DIRECTION.DOWN;
 			}
 
 			//keys for player 3
-            if(key.keyCode === 85){
-                pong.player3.move = DIRECTION.UP;
-            }
-            if(key.keyCode == 74){
-                pong.player3.move = DIRECTION.DOWN;
+			if(key.keyCode === 85){
+				pong.player3.move = DIRECTION.UP;
+			}
+			if(key.keyCode == 74){
+				pong.player3.move = DIRECTION.DOWN;
 			}
 
 			//keys for player 4
-            if(key.keyCode === 104){
-                pong.player4.move = DIRECTION.UP;
-            }
-            if(key.keyCode == 101){
-                pong.player4.move = DIRECTION.DOWN;
+			if(key.keyCode === 104){
+				pong.player4.move = DIRECTION.UP;
+			}
+			if(key.keyCode == 101){
+				pong.player4.move = DIRECTION.DOWN;
 			}
 			
 			//keys for menu
 			if(key.keyCode == 80){ //Pause (P)
-				if(pong.running){
-					pong.running = false;
-					pause = true;
+				if(screenNumber == 1){
+					if(pong.running){
+						pong.running = false;
+						pause = true;
+					}
+					else if(!pong.running)
+					{
+						pong.running = true;
+						pause = false;
+					}
+					
+					socket.emit("pause", pause);
 				}
-				else if(!pong.running)
-				{
-					pong.running = true;
-					pause = false;
-				}
-				socket.emit("pause", pause);
 			}
 			if(key.keyCode == 32){//Start (spacebar)
-				if(!pong.running || pong.over)
-				{
-					pong.resetGame()
-					socket.emit("play")
+				if(screenNumber == 1){
+					if(!pong.running || pong.over)
+					{
+						pong.resetGame()
+						socket.emit("play")
+					}
 				}
 			}
 			
@@ -443,11 +449,11 @@ var Game = {
 					playercount = 4;
 				}
 			}
-        });
+		});
 
-        document.addEventListener('keyup',function(key){
-            if(key.keyCode == 85 || key.keyCode == 74)
-            pong.player3.move = DIRECTION.IDLE
+		document.addEventListener('keyup',function(key){
+			if(key.keyCode == 85 || key.keyCode == 74)
+			pong.player3.move = DIRECTION.IDLE
 			
 			if(key.keyCode == 87 || key.keyCode == 83)
 			pong.player1.move = DIRECTION.IDLE
@@ -456,20 +462,18 @@ var Game = {
 			pong.player2.move = DIRECTION.IDLE
 			
 			if(key.keyCode == 104 || key.keyCode == 101)
-            pong.player4.move = DIRECTION.IDLE
+			pong.player4.move = DIRECTION.IDLE
 		});
     },
 
-	resetGame: function()
-	{
+	resetGame: function(){
 		pong.running = true;
 		pong.over = false;
 		this.resetPlayers();
 		this.resetBall();
 	},
 	
-	resetBall: function()
-	{
+	resetBall: function(){
 		var aux1 = this.randomInt(0,2);
 		var aux2 = this.randomInt(0,2);
 		
@@ -480,8 +484,8 @@ var Game = {
 		pong.ball.moveX = aux1 === 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
 		pong.ball.moveY = aux2 === 0 ? DIRECTION.UP : DIRECTION.DOWN;
 	},
-	resetPlayers()
-	{
+	
+	resetPlayers(){
 		pong.player1.score = 0;
 		pong.player2.score = 0;
 		pong.player1.y = canvas.height / 2 - 250;
@@ -489,6 +493,7 @@ var Game = {
 		pong.player3.y = (pong.player1.y + pong.player1.height + 50);
 		pong.player4.y = (pong.player2.y + pong.player2.height + 50);
 	},
+	
 	drawNum: function(num, x, y, tam){
 		//draw the score numbers
 		switch(num){
