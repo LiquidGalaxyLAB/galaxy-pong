@@ -116,12 +116,18 @@ var Game = {
 			pong.resetGame();
 		})
 		socket.on("pause", function(msg){
-			pause = msg;
-			if(pause)
-				pong.running = false;
-			else
-				pong.running = true;	
-
+			console.log("Pause = " + pause + " Running = " + pong.running + " Over = " + pong.over)
+			if(!pong.running && !pong.over)
+			{
+				console.log("A");
+			}
+			else{
+				pause = msg;
+				if(pause)
+					pong.running = false;
+				else
+					pong.running = true;
+			}
 		})
 
 		socket.on("fps",function(){
@@ -215,6 +221,16 @@ var Game = {
 			this.players = [this.player1,this.player2,this.player3,this.player4];
 		}
 
+		if(this.over)
+		{
+			this.resetBall();
+			this.resetPlayers();
+			this.running = false;
+			this.pause = false;
+			
+			if(screenNumber == 1)
+				socket.emit("GameOver");
+		}
 		if(!this.over && this.running)
 		{
 			if(screenNumber == 1){
@@ -290,12 +306,7 @@ var Game = {
 				})
 				if(this.player1.score == 9 || this.player2.score == 9)
 				{
-					this.resetGame();
-					this.running = false;
-					this.pause = false;
-					
-					if(screenNumber == 1)
-						socket.emit("GameOver");
+					this.over = true;
 				}
 			}
 			else{
@@ -421,16 +432,19 @@ var Game = {
 			//keys for menu
 			if(key.keyCode == 80){ //Pause (P)
 				if(screenNumber == 1){
-					if(pong.running){
-						pong.running = false;
-						pause = true;
-					}
-					else if(!pong.running)
+					if(!pong.running && !pong.over && !pause){}
+					else
 					{
-						pong.running = true;
-						pause = false;
+						if(pong.running){
+							pong.running = false;
+							pause = true;
+						}
+						else if(!pong.running)
+						{
+							pong.running = true;
+							pause = false;
+						}
 					}
-					
 					socket.emit("pause", pause);
 				}
 			}
