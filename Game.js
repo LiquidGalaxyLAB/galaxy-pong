@@ -65,8 +65,8 @@ var Player = {
 			move : DIRECTION.IDLE,
 			
 			centro : [45,55],
-			meios : [[15,45],[55, 85]],
-			pontas : [[0,15],[85,100]]
+			meios : [[20,45],[55, 80]],
+			pontas : [[0,20],[80,100]]
 		};
 	},
 }
@@ -87,7 +87,7 @@ var Game = {
 
         this.running = this.over = false;
 
-        this.ball = Ball.new.call(this,2 );
+        this.ball = Ball.new.call(this,17 );
 
 		pong.listen();
 		pong.menu();
@@ -193,20 +193,14 @@ var Game = {
 				if (this.ball.x <= 0)
 				{
 					this.player2.score+=1;
-					this.ball.x = (maxRes/2) - (this.ball.width/2);
-					this.ball.y = canvas.height/2;
-					this.ball.moveX = DIRECTION.LEFT;
-					this.ball.speedX = 25;
+					this.resetBall();
 					socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
 				}
 				//goal player 1, wall = canvas.width
 				if (this.ball.x >= maxRes - this.ball.width)
 				{
 					this.player1.score+=1;
-					this.ball.x = (maxRes/2) - (this.ball.width/2);
-					this.ball.y = canvas.height/2;
-					this.ball.moveX = DIRECTION.RIGHT;
-					this.ball.speedX = 25;
+					this.resetBall();
 					socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
 				}
 
@@ -452,20 +446,31 @@ var Game = {
 	{
 		pong.running = true;
 		pong.over = false;
-		pong.ball.moveX = DIRECTION.RIGHT;
-		pong.ball.moveY = DIRECTION.UP;
+		this.resetPlayers();
+		this.resetBall();
+	},
+	
+	resetBall: function()
+	{
+		var aux1 = this.randomInt(0,2);
+		var aux2 = this.randomInt(0,2);
+		
+		pong.ball.x = (maxRes/2) - (pong.ball.width/2);
+		pong.ball.y = canvas.height/2;
+		pong.ball.speedX = this.randomInt(10,26);
+		pong.ball.speedY = this.randomInt(10,26);
+		pong.ball.moveX = aux1 === 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
+		pong.ball.moveY = aux2 === 0 ? DIRECTION.UP : DIRECTION.DOWN;
+	},
+	resetPlayers()
+	{
 		pong.player1.score = 0;
 		pong.player2.score = 0;
 		pong.player1.y = canvas.height / 2 - 250;
 		pong.player2.y = canvas.height / 2 - 250;
 		pong.player3.y = (pong.player1.y + pong.player1.height + 50);
 		pong.player4.y = (pong.player2.y + pong.player2.height + 50);
-		pong.ball.x = (maxRes/2) - (pong.ball.width/2);
-		pong.ball.y = canvas.height/2;
-		pong.ball.speed = 25;
-		
 	},
-	
 	drawNum: function(num, x, y, tam){
 		//draw the score numbers
 		switch(num){
@@ -564,6 +569,11 @@ var Game = {
 			break;
 		}
 
+	},
+	
+	randomInt: function(min, max){
+		var random = Math.floor(Math.random()*(max-min)+min)
+		return random;
 	}
 }
 pong =  Object.assign({},Game);
