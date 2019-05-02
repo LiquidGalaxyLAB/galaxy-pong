@@ -13,6 +13,7 @@ var player2X;
 var pause = false;
 var fpsAnterior = 0;
 var showFPS = false;
+var playercount = 1
 // link vars
 
 
@@ -80,6 +81,10 @@ var Game = {
 
 		this.players = [this.player1, this.player2, this.player3, this.player4]
 
+		//change player3 and player4 position
+		this.player3.y = (this.player1.y + this.player1.height + 50);
+		this.player4.y = (this.player2.y + this.player2.height + 50);
+
         this.running = this.over = false;
 
         this.ball = Ball.new.call(this,2 );
@@ -138,9 +143,6 @@ var Game = {
 			}
 		});
 
-
-
-
 	},
 	menu: function () {
 		// Draw all the Pong objects in their current state
@@ -150,22 +152,38 @@ var Game = {
 		var boxH = 100;
 		var boxX = canvas.width / 2 - (boxW / 2);
 		var boxY = canvas.height / 2 - 48;
-		
+		//var bool = true;
 		// Change the canvas font size and color
 		context.font = 'bold 50px Courier new';
 
 		// Change the canvas color;
 		context.fillStyle = '#06ba12';
-
+		
 		// Draw the text
 		if(pause){
 			context.fillText('SPACE TO RESTART',boxX + 40,boxY + 60);
 			context.fillText('P TO CONTINUE',boxX + 80,boxY + 120);
 		}
-		else
+		else{
+			context.fillText('Player count: ',boxX + 40,boxY) //
+			context.fillStyle = '#FFFFFF';
+			context.fillStyle = '#06ba12';
+			context.fillText(playercount,boxX + 430, boxY) //
+			//setTimeout();
+			context.fillStyle = '#06ba12';
 			context.fillText('SPACE TO START',boxX + 40,boxY + 60);
-			
 
+			/*setTimeout(function(){ 
+				if(!bool){
+					context.fillStyle = '#FFFFFF';
+					context.fillText(playercount,boxX + 410, boxY);
+					bool = false;
+				}else{
+					context.clearRect(boxX + 410, boxY,50,50)
+				}
+				
+			}, 3000)*/
+		}
 	},
     update: function(){
 		if(!this.over && this.running)
@@ -362,7 +380,7 @@ var Game = {
             if(key.keyCode === 104){
                 pong.player4.move = DIRECTION.UP;
             }
-            if(key.keyCode == 98){
+            if(key.keyCode == 101){
                 pong.player4.move = DIRECTION.DOWN;
 			}
 			
@@ -390,6 +408,28 @@ var Game = {
 			if(key.keyCode == 70){//Show FPS
 				//showFPS = !showFPS;
 				socket.emit("fps");
+			}
+
+			//keys for select player
+			if(key.keyCode == 49 || key.keyCode == 97){
+				if(!pong.running || pong.over){
+					playercount = 1;
+				}
+			}
+			if(key.keyCode == 50 || key.keyCode == 98){
+				if(!pong.running || pong.over){
+					playercount = 2;
+				}
+			}
+			if(key.keyCode == 51 || key.keyCode == 99){
+				if(!pong.running || pong.over){
+					playercount = 3;
+				}
+			}
+			if(key.keyCode == 52 || key.keyCode == 100){
+				if(!pong.running || pong.over){
+					playercount = 4;
+				}
 			}
         });
 
