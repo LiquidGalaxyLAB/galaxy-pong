@@ -329,36 +329,32 @@ var Game = {
 			{
 				if(screenNumber == 1)
 				{
-					context.fillStyle = '#FFFFFF';
+					if(playerAt.id == 1)
+						context.fillStyle = '#06ba12';
+					else
+						context.fillStyle = '#FFFFFF';
 					context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
 				}
 			}
 			else
 			{
-				context.fillStyle = '#FFFFFF';
+				if(playerAt.id == 2)
+					context.fillStyle = '#06ba12';
+				else
+					context.fillStyle = '#FFFFFF';
 				context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
 			}
 		});
 
-		//draw the elements
-		/*if(screenNumber == 1){
-			context.fillStyle = '#06ba12';
-			context.fillRect(this.player1.x,this.player1.y, this.player1.width, this.player1.height);
-			context.fillStyle = '#FFFFFF';
-			context.fillRect(this.player3.x,this.player3.y,this.player3.width,this.player3.height); 
-		} 
-		context.fillStyle = '#06ba12';
-		context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
+		//draw the ball
 		context.fillStyle = '#FFFFFF';
-		context.fillRect(this.player4.x,this.player4.y,this.player4.width,this.player4.height); */
-
-		// revisaar!!!
 		if(screenNumber == 1) {
 			context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height)
 		}else{
 			context.fillRect(ballX, ballY, this.ball.width, this.ball.height)
 		}
 
+		//draw the line
 		linePos = (maxRes/2 - (screenRes * (screenNumber -1)))
 		context.fillStyle = '#FFFFFF';
 		
@@ -373,6 +369,7 @@ var Game = {
 		this.drawNum(this.player1.score, numPos1, 25, 50);
 		this.drawNum(this.player2.score, numPos2, 25, 50);
 		
+		//fps
 		if(showFPS){
 			// Change the canvas font size and color
 			context.font = 'bold 12px Courier new';
@@ -382,7 +379,8 @@ var Game = {
 			
 		}
 		fpsAnterior = performance.now();
-    },
+		},
+		
     loop: function(){
 		//keep the events running
 		pong.update();
