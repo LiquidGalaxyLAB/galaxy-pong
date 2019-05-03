@@ -63,9 +63,11 @@ var Player = {
 			
 			move : DIRECTION.IDLE,
 			
-			centro : [45,55],
-			meios : [[20,45],[55, 80]],
-			pontas : [[0,20],[80,100]]
+			centro : [50,60],
+			meios : [[30,50],[60, 70]],
+			pontas : [[0,30],[70,100]],
+			
+			IA : false
 		};
 	},
 }
@@ -131,7 +133,6 @@ var Game = {
 			pong.over = true;
 		})
 		socket.on('updateData',function(msg){
-			console.log(msg.playerCount);
 			if(screenNumber != 1){
 				offset = (screenNumber - 1) * screenRes
 				ballX = msg.ballX - offset;
@@ -203,14 +204,18 @@ var Game = {
     update: function(){
 		//Set player count in the game
 		if(playercount == 1){
-			this.players = [this.player1];
+			this.players = [this.player1, this.player2];
+			this.player2.IA = true;
 		}
 		else if(playercount == 2){
 			this.players = [this.player1,this.player2];
+			this.player2.IA = false;
 		}else if(playercount == 3){
 			this.players = [this.player1,this.player2,this.player3];
+			this.player2.IA = false;
 		}else{
 			this.players = [this.player1,this.player2,this.player3,this.player4];
+			this.player2.IA = false;
 		}
 		if(this.over)
 		{
@@ -230,6 +235,7 @@ var Game = {
 				{
 					this.player2.score+=1;
 					this.resetBall();
+					this.ball.moveX = DIRECTION.RIGHT;
 					socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
 				}
 				//goal player 1, wall = canvas.width
@@ -237,6 +243,7 @@ var Game = {
 				{
 					this.player1.score+=1;
 					this.resetBall();
+					this.ball.moveX = DIRECTION.LEFT;
 					socket.emit("Goals", {player1 : this.player1.score, player2 : this.player2.score})
 				}
 
@@ -252,8 +259,18 @@ var Game = {
 					if (playerAt.move === DIRECTION.UP) playerAt.y -= playerAt.speed;
 					else if (playerAt.move === DIRECTION.DOWN) playerAt.y += playerAt.speed;
 					
-					if (playerAt.y <= 0) playerAt.y = 0;
-					else if (playerAt.y >= (canvas.height - playerAt.height)) playerAt.y = (canvas.height - playerAt.height);
+					if (playerAt.y <= 0) {
+						playerAt.y = 0;
+						if(playerAt.IA)
+							playerAt.move = DIRECTION.DOWN;
+					}
+					else if (playerAt.y >= (canvas.height - playerAt.height)) {
+						playerAt.y = (canvas.height - playerAt.height);
+						if(playerAt.IA)
+						{
+							playerAt.move = DIRECTION.UP;
+						}
+					}
 					
 					if (pong.ball.x + pong.ball.width >= playerAt.x && pong.ball.x <= playerAt.x + playerAt.width) {
 						if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.centro[1]/100) 
@@ -295,7 +312,7 @@ var Game = {
 						}
 					}
 				})
-				if(this.player1.score == 9 || this.player2.score == 9)
+				if(this.player1.score == 10 || this.player2.score == 10)
 				{
 					this.over = true;
 				}
@@ -407,13 +424,15 @@ var Game = {
 			}
 
 			//keys for player 2
-			if(key.keyCode == 38){
-				pong.player2.move = DIRECTION.UP;
+			if(!pong.player2.IA)
+			{
+				if(key.keyCode == 38){
+					pong.player2.move = DIRECTION.UP;
+				}
+				if(key.keyCode == 40){
+					pong.player2.move =  DIRECTION.DOWN;
+				}
 			}
-			if(key.keyCode == 40){
-				pong.player2.move =  DIRECTION.DOWN;
-			}
-
 			//keys for player 3
 			if(key.keyCode === 85){
 				pong.player3.move = DIRECTION.UP;
@@ -493,7 +512,7 @@ var Game = {
 			if(key.keyCode == 87 || key.keyCode == 83)
 			pong.player1.move = DIRECTION.IDLE
 			
-			if(key.keyCode == 38 || key.keyCode == 40)
+			if((key.keyCode == 38 || key.keyCode == 40)&& !pong.player2.IA)
 			pong.player2.move = DIRECTION.IDLE
 			
 			if(key.keyCode == 104 || key.keyCode == 101)
@@ -514,7 +533,7 @@ var Game = {
 		
 		pong.ball.x = (maxRes/2) - (pong.ball.width/2);
 		pong.ball.y = canvas.height/2;
-		pong.ball.speedX = this.randomInt(10,26);
+		pong.ball.speedX = this.randomInt(10,18);
 		pong.ball.speedY = this.	randomInt(10,26);
 		pong.ball.moveX = aux1 === 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
 		pong.ball.moveY = aux2 === 0 ? DIRECTION.UP : DIRECTION.DOWN;
@@ -527,6 +546,13 @@ var Game = {
 		pong.player2.y = canvas.height / 2 - 250;
 		pong.player3.y = (pong.player1.y + pong.player1.height + 50);
 		pong.player4.y = (pong.player2.y + pong.player2.height + 50);
+		
+		pong.players.forEach(function(playerAt){
+			playerAt.move = DIRECTION.IDLE;
+		})
+		
+		if(pong.player2.IA)
+			pong.player2.move = DIRECTION.DOWN;	
 	},
 	
 	drawNum: function(num, x, y, tam){
