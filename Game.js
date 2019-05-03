@@ -277,7 +277,7 @@ var Game = {
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.centro[0]/100)) {					
 							pong.ball.moveY = DIRECTION.IDLE;
 							pong.ball.moveX = playerAt.pushBall;
-							pong.ball.speedX = 10;
+							pong.ball.speedX = 14;
 						}
 						else if(pong.ball.y <= playerAt.y + playerAt.height * (playerAt.meios[0][1]/100) 
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.meios[0][0]/100)){						
