@@ -57,7 +57,7 @@ var Player = {
             height: 200, //
 			x : side === 'left' ? 50 : maxRes - 200,
             y : canvas.height / 2 - 250,
-            speed : 20,
+            speed : 25,
             score :0,
 			pushBall : side === 'left' ? DIRECTION.RIGHT : DIRECTION.LEFT,
 			
