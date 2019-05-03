@@ -347,18 +347,18 @@ var Game = {
 				if(screenNumber == 1)
 				{
 					if(playerAt.id == 1)
-						context.fillStyle = '#06ba12';
-					else
 						context.fillStyle = '#FFFFFF';
+					else
+						context.fillStyle = '#06ba12';
 					context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
 				}
 			}
 			else
 			{
 				if(playerAt.id == 2)
-					context.fillStyle = '#06ba12';
-				else
 					context.fillStyle = '#FFFFFF';
+				else
+					context.fillStyle = '#06ba12';
 				context.fillRect(playerAt.x, playerAt.y, playerAt.width, playerAt.height);
 			}
 		});
