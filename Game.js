@@ -75,7 +75,7 @@ var Player = {
 var Game = {
     initialize: function(){
 		//initialize everything that needs to appear when the game is initialized
-        this.player1 = Player.new.call(this,'left',1);
+    this.player1 = Player.new.call(this,'left',1);
 		this.player2 = Player.new.call(this,'right',2);
 		this.player3 = Player.new.call(this,'left',3); //
 		this.player4 = Player.new.call(this,'right',4); //
@@ -153,7 +153,7 @@ var Game = {
 		var boxX = canvas.width / 2 - (boxW / 2);
 		var boxY = canvas.height / 2 - 48;
 		//var bool = true;
-		// Change the canvas font size and color
+		// Change the canvas font size
 		context.font = 'bold 50px Courier new';
 
 		// Change the canvas color;
