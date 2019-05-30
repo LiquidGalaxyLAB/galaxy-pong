@@ -4,8 +4,6 @@
 
 ACTUALSCREEN=0
 
-pm2 stop pong
-pm2 stop snake
 pm2 start pong
 
 sleep 3
