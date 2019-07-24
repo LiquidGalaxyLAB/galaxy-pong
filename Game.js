@@ -16,21 +16,6 @@ var showFPS = false;
 var playercount = 1
 // link vars
 
-let accelerometerText = document.getElementById('accelerometerText');
-
-    if (window.Accelerometer) {
-      let sensor1 = new Accelerometer();
-      sensor1.addEventListener('reading', function (e) {
-        if(e.target.y > 3)
-          socket.emit('move', 'UP')
-        else if(e.target.y < -3)
-          socket.emit('move', 'DOWN')
-        else
-          socket.emit('move', 'IDLE')
-        
-      });
-      sensor1.start();
-    }
 ////////////////////////////v
 var screenNumber;
 maxRes = screenRes;
@@ -164,6 +149,15 @@ var Game = {
 			}
 		});
 
+		socket.on("move", msg=>{
+			console.log(msg)
+			if(msg.dir == DIRECTION.UP)
+				pong.player1.move = DIRECTION.UP;
+			else if( msg.dir == DIRECTION.DOWN)
+				pong.player1.move = DIRECTION.DOWN
+			else
+				pong.player1.move = DIRECTION.IDLE
+		})
 	},
 	menu: function () {
 		// Draw all the Pong objects in their current state

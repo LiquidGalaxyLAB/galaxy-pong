@@ -45,9 +45,9 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-// app.get('/game.js', function(req, res){
-//   res.sendFile(__dirname + '/Game.js');
-// });
+app.get('/Game.js', function(req, res){
+   res.sendFile(__dirname + '/Game.js');
+ });
 
 
 io.on('connection', function(socket){
@@ -58,7 +58,7 @@ io.on('connection', function(socket){
   //tudo o mundo
 
   socket.on("move", msg=>{
-    console.log(msg)
+    io.emit('move',{player: 1, dir: msg})
   })
 
   //welcome process
