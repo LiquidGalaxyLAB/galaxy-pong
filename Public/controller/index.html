@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Pong Controller</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="display-6">Team ...</h1>
+      <p class="lead">Move your phone up and down to move the paddle</p>
+      <div>
+        <img id="myImag" src="https://image.flaticon.com/icons/png/512/25/25223.png" class="img-thumbnail" alt="Responsive image">
+      </div>
+      
+      <hr class="my-4">
+
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <button type="button" class="btn btn-success" onclick="onBtnStart();">Start</button>
+          </div>
+          <div class="col"></div>
+          <div class="col">
+            <button type="button" class="btn btn-success" onclick="onBtnPause();">Pause</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="controller.js"></script>
+</html>

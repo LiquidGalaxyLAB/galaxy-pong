@@ -40,16 +40,17 @@ function message(screen, nScreen) {
 }
 var nScreens = 0
 
-// app.get('/', function(req, res){
-//   res.sendFile(__dirname + '/index.html');
-// });
+app.use(express.static(__dirname+'/Public'));
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/index.html');
+});
 
 // app.get('/game.js', function(req, res){
 //   res.sendFile(__dirname + '/Game.js');
 // });
 
 
-io.on('connection', function (socket) {
+io.on('connection', function(socket){
   nScreens += 1;
   //catch name for url
   // console.log("id",url.parse(socket.handshake.headers.referer))
