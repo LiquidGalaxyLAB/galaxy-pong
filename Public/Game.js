@@ -22,7 +22,14 @@ var screenNumber;
 maxRes = screenRes;
 //
 
-
+if(window.addEventListener("gamepadconnected", function(e) {
+	console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+	  e.gamepad.index, e.gamepad.id,
+	  e.gamepad.buttons.length, e.gamepad.axes.length);
+  }))
+	  console.log('aaaaaaaaaaaaaaaaaaaaaaaa')
+	else
+  		console.log('bbbbbbbbbbbbbbbbbb')
 
 //Directions
 var DIRECTION = {

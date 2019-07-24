@@ -22,14 +22,10 @@ function message( screen, nScreen){
 }
 var nScreens = 0
 
+app.use(express.static(__dirname+'/Public'));
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
-
-app.get('/game.js', function(req, res){
-  res.sendFile(__dirname + '/Game.js');
-});
-
 
 io.on('connection', function(socket){
   nScreens += 1;
