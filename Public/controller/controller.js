@@ -32,14 +32,14 @@ var DIRECTION = {
 
 var lastDir = DIRECTION.IDLE;
 
-function onBtnStart() {
-    console.log('start');
-}
-
 function onBtnPause() {
     socket.emit('pause', pause = !pause);
+    if(!pause){
+        document.getElementById("btnIcon").className = "btn fa fa-pause btn-success"
+    }
+    else
+        document.getElementById("btnIcon").className = "btn fa fa-play btn-success" 
 }
-
 
 let accelerometerText = document.getElementById('accelerometerText');
 

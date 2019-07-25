@@ -7,7 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Pong Controller</title>
   </head>
   <body>
@@ -17,20 +17,14 @@
       <div>
         <img id="myImag" src="https://i.ibb.co/VxNLmKP/pong-App-Controller-idle.png" class="img-thumbnail" alt="Responsive image">
       </div>
-      
       <hr class="my-4">
 
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <button type="button" class="btn btn-success" onclick="onBtnStart();">Start</button>
-          </div>
-          <div class="col"></div>
-          <div class="col">
-            <button type="button" class="btn btn-success" onclick="onBtnPause();">Pause</button>
-          </div>
-        </div>
+
+      <div class="d-flex justify-content-center">
+        <button id="btnIcon" style="width:80px;height:40px;" class="btn fa fa-pause btn-success " onclick="onBtnPause();"></button>
       </div>
+
+
     </div>
   </body>
 	<script src="/socket.io/socket.io.js"></script>
