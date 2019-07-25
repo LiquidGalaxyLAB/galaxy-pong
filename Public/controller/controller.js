@@ -16,8 +16,6 @@ function onBtnStart() {
 
 function onBtnPause() {
     console.log('pause');
-    //how to change an image src 
-    document.getElementById('myImag').src = "https://www.stickpng.com/assets/images/58f8bd170ed2bdaf7c128308.png"
 }
 
 
@@ -27,14 +25,17 @@ if (window.Accelerometer) {
     let sensor1 = new Accelerometer();
     var actualDir
     sensor1.addEventListener('reading', function (e) {
-        if (e.target.y > 3) {
+        if (e.target.y > 2) {
             actualDir = DIRECTION.UP
+            document.getElementById('myImag').src = "https://i.ibb.co/fpVq8dc/pong-App-Controller-up.png"
         }
-        else if (e.target.y < -3){
+        else if (e.target.y < -2){
             actualDir = DIRECTION.DOWN
+            document.getElementById('myImag').src = "https://i.ibb.co/0Zt0pSL/pong-App-Controller-down.png"
         }
         else{
             actualDir = DIRECTION.IDLE
+            document.getElementById('myImag').src = "https://i.ibb.co/VxNLmKP/pong-App-Controller-idle.png"
         }
 
         if(actualDir != lastDir)
@@ -44,5 +45,7 @@ if (window.Accelerometer) {
         }
     });
     sensor1.start();
+
+
 }
 
