@@ -156,10 +156,7 @@ var Game = {
 		socket.on("move", msg => {
 			console.log(msg)
 			if (msg.player == 0) {
-				if(msg.speed)
-					pong.player1.speed = 25
-				else
-					pong.player1.speed = 10
+				pong.player1.speed = 25*msg.speed/10
 
 				if (msg.dir == DIRECTION.UP)
 					pong.player1.move = DIRECTION.UP;
@@ -170,6 +167,7 @@ var Game = {
 			}
 			else if(msg.player == 1){
 				
+				pong.player2.speed = 25*msg.speed/10
 				if (msg.dir == DIRECTION.UP)
 					pong.player2.move = DIRECTION.UP;
 				else if (msg.dir == DIRECTION.DOWN)
@@ -179,6 +177,7 @@ var Game = {
 			}
 			else if(msg.player == 2){
 				
+				pong.player3.speed = 25*msg.speed/10
 				if (msg.dir == DIRECTION.UP)
 					pong.player3.move = DIRECTION.UP;
 				else if (msg.dir == DIRECTION.DOWN)
@@ -188,6 +187,7 @@ var Game = {
 			}
 			else if(msg.player == 3){
 				
+				pong.player4.speed = 25*msg.speed/10
 				if (msg.dir == DIRECTION.UP)
 					pong.player4.move = DIRECTION.UP;
 				else if (msg.dir == DIRECTION.DOWN)
