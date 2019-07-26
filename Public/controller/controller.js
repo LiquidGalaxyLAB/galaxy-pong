@@ -48,11 +48,11 @@ if (window.Accelerometer) {
     let sensor1 = new Accelerometer();
     var actualDir
     sensor1.addEventListener('reading', function (e) {
-        if (e.target.y > 3) {
+        if (e.target.y > 1) {
             actualDir = DIRECTION.UP
             document.getElementById('myImag').src = "https://i.ibb.co/fpVq8dc/pong-App-Controller-up.png"
         }
-        else if (e.target.y < -3) {
+        else if (e.target.y < -1) {
             actualDir = DIRECTION.DOWN
             document.getElementById('myImag').src = "https://i.ibb.co/0Zt0pSL/pong-App-Controller-down.png"
         }

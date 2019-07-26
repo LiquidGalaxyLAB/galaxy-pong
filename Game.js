@@ -14,6 +14,7 @@ var pause = false;
 var fpsAnterior = 0;
 var showFPS = false;
 var playercount = 1
+var pei = new Audio('sounds/pei.mp3')
 // link vars
 
 ////////////////////////////v
@@ -30,7 +31,7 @@ if (window.addEventListener("gamepadconnected", function (e) {
 else
 	console.log('bbbbbbbbbbbbbbbbbb')
 
-window.onbeforeunload = function(){
+window.onbeforeunload = function () {
 	socket.disconnect();
 }
 
@@ -156,7 +157,12 @@ var Game = {
 		socket.on("move", msg => {
 			console.log(msg)
 			if (msg.player == 0) {
-				pong.player1.speed = 25*msg.speed/10
+				if (msg.speed > 6)
+					pong.player1.speed = 80 * msg.speed / 10
+				else if (msg.speed > 2)
+					pong.player1.speed = 60 * msg.speed / 10
+				else
+					pong.player1.speed = 25 * msg.speed / 10
 
 				if (msg.dir == DIRECTION.UP)
 					pong.player1.move = DIRECTION.UP;
@@ -165,9 +171,15 @@ var Game = {
 				else
 					pong.player1.move = DIRECTION.IDLE
 			}
-			else if(msg.player == 1){
-				
-				pong.player2.speed = 25*msg.speed/10
+			else if (msg.player == 1) {
+
+				if (msg.speed > 6)
+					pong.player2.speed = 80 * msg.speed / 10
+				else if (msg.speed > 2)
+					pong.player2.speed = 60 * msg.speed / 10
+				else
+					pong.player2.speed = 25 * msg.speed / 10
+
 				if (msg.dir == DIRECTION.UP)
 					pong.player2.move = DIRECTION.UP;
 				else if (msg.dir == DIRECTION.DOWN)
@@ -175,9 +187,14 @@ var Game = {
 				else
 					pong.player2.move = DIRECTION.IDLE
 			}
-			else if(msg.player == 2){
-				
-				pong.player3.speed = 25*msg.speed/10
+			else if (msg.player == 2) {
+				if (msg.speed > 6)
+					pong.player3.speed = 80 * msg.speed / 10
+				else if (msg.speed > 2)
+					pong.player3.speed = 60 * msg.speed / 10
+				else
+					pong.player3.speed = 25 * msg.speed / 10
+
 				if (msg.dir == DIRECTION.UP)
 					pong.player3.move = DIRECTION.UP;
 				else if (msg.dir == DIRECTION.DOWN)
@@ -185,9 +202,14 @@ var Game = {
 				else
 					pong.player3.move = DIRECTION.IDLE
 			}
-			else if(msg.player == 3){
-				
-				pong.player4.speed = 25*msg.speed/10
+			else if (msg.player == 3) {
+				if (msg.speed > 6)
+					pong.player4.speed = 80 * msg.speed / 10
+				else if (msg.speed > 2)
+					pong.player4.speed = 60 * msg.speed / 10
+				else
+					pong.player4.speed = 25 * msg.speed / 10
+
 				if (msg.dir == DIRECTION.UP)
 					pong.player4.move = DIRECTION.UP;
 				else if (msg.dir == DIRECTION.DOWN)
@@ -323,6 +345,7 @@ var Game = {
 							pong.ball.moveY = DIRECTION.IDLE;
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 14;
+							pei.play();
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.meios[0][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.meios[0][0] / 100)) {
@@ -330,6 +353,7 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 17;
 							pong.ball.speedY = 12;
+							pei.play();
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.meios[1][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.meios[1][0] / 100)) {
@@ -338,6 +362,7 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 17;
 							pong.ball.speedY = 12;
+							pei.play();
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[0][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[0][0] / 100)) {
@@ -346,6 +371,7 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 25;
 							pong.ball.speedY = 25;
+							pei.play();
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[1][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[1][0] / 100)) {
@@ -354,6 +380,9 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 25;
 							pong.ball.speedY = 25;
+							pei.play().catch(err=>{
+								console.log(err)
+							});
 						}
 					}
 				})
@@ -599,9 +628,10 @@ var Game = {
 			playerAt.move = DIRECTION.IDLE;
 		})
 
-		if (pong.player2.IA){
+		if (pong.player2.IA) {
 			pong.player2.speed = 25
-			pong.player2.move = DIRECTION.DOWN;}
+			pong.player2.move = DIRECTION.DOWN;
+		}
 	},
 
 	drawNum: function (num, x, y, tam) {
