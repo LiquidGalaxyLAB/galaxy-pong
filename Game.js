@@ -156,6 +156,11 @@ var Game = {
 		socket.on("move", msg => {
 			console.log(msg)
 			if (msg.player == 0) {
+				if(msg.speed)
+					pong.player1.speed = 25
+				else
+					pong.player1.speed = 10
+
 				if (msg.dir == DIRECTION.UP)
 					pong.player1.move = DIRECTION.UP;
 				else if (msg.dir == DIRECTION.DOWN)
@@ -308,6 +313,7 @@ var Game = {
 						playerAt.y = (canvas.height - playerAt.height);
 						if (playerAt.IA) {
 							playerAt.move = DIRECTION.UP;
+							playerAt.speed = 25
 						}
 					}
 
@@ -452,34 +458,42 @@ var Game = {
 			//keys for player 1
 			if (key.keyCode === 87) {
 				pong.player1.move = DIRECTION.UP;
+				pong.player1.speed = 25
 			}
 			if (key.keyCode == 83) {
 				pong.player1.move = DIRECTION.DOWN;
+				pong.player1.speed = 25
 			}
 
 			//keys for player 2
 			if (!pong.player2.IA) {
 				if (key.keyCode == 38) {
 					pong.player2.move = DIRECTION.UP;
+					pong.player2.speed = 25
 				}
 				if (key.keyCode == 40) {
 					pong.player2.move = DIRECTION.DOWN;
+					pong.player2.speed = 25
 				}
 			}
 			//keys for player 3
 			if (key.keyCode === 85) {
 				pong.player3.move = DIRECTION.UP;
+				pong.player3.speed = 25
 			}
 			if (key.keyCode == 74) {
 				pong.player3.move = DIRECTION.DOWN;
+				pong.player3.speed = 25
 			}
 
 			//keys for player 4
 			if (key.keyCode === 104) {
 				pong.player4.move = DIRECTION.UP;
+				pong.player4.speed = 25
 			}
 			if (key.keyCode == 101) {
 				pong.player4.move = DIRECTION.DOWN;
+				pong.player4.speed = 25
 			}
 
 			//keys for menu
@@ -585,8 +599,9 @@ var Game = {
 			playerAt.move = DIRECTION.IDLE;
 		})
 
-		if (pong.player2.IA)
-			pong.player2.move = DIRECTION.DOWN;
+		if (pong.player2.IA){
+			pong.player2.speed = 25
+			pong.player2.move = DIRECTION.DOWN;}
 	},
 
 	drawNum: function (num, x, y, tam) {

@@ -2,6 +2,7 @@ var socket = io.connect({ query: "type=controller" });
 var playerNum = -1;
 let txtTeam = document.getElementById('txtTeam')
 var pause = false;
+var fullSpeed = false;
 
 socket.on('welcome', msg => {
     playerNum = msg;
@@ -30,7 +31,7 @@ var DIRECTION = {
     RIGHT: 4
 };
 
-var lastDir = DIRECTION.IDLE;
+var lastDir = {dir:DIRECTION.IDLE, speed:false};
 
 function onBtnPause() {
     socket.emit('pause', pause = !pause);
@@ -47,22 +48,36 @@ if (window.Accelerometer) {
     let sensor1 = new Accelerometer();
     var actualDir
     sensor1.addEventListener('reading', function (e) {
-        if (e.target.y > 2) {
+        if (e.target.y > 6) {
             actualDir = DIRECTION.UP
+            fullSpeed = true
             document.getElementById('myImag').src = "https://i.ibb.co/fpVq8dc/pong-App-Controller-up.png"
         }
-        else if (e.target.y < -2) {
+        else if (e.target.y > 3) {
+            actualDir = DIRECTION.UP
+            fullSpeed = false
+            document.getElementById('myImag').src = "https://i.ibb.co/fpVq8dc/pong-App-Controller-up.png"
+        }
+        else if (e.target.y < -6) {
             actualDir = DIRECTION.DOWN
+            fullSpeed = true
+            document.getElementById('myImag').src = "https://i.ibb.co/0Zt0pSL/pong-App-Controller-down.png"
+        }
+        else if (e.target.y < -3) {
+            actualDir = DIRECTION.DOWN
+            fullSpeed = false
             document.getElementById('myImag').src = "https://i.ibb.co/0Zt0pSL/pong-App-Controller-down.png"
         }
         else {
             actualDir = DIRECTION.IDLE
+            fullSpeed = true
             document.getElementById('myImag').src = "https://i.ibb.co/VxNLmKP/pong-App-Controller-idle.png"
         }
 
-        if (actualDir != lastDir) {
-            lastDir = actualDir;
-            socket.emit('move', actualDir)
+        if (actualDir != lastDir.dir || fullSpeed != lastDir.speed) {
+            lastDir.dir = actualDir
+            lastDir.speed = fullSpeed
+            socket.emit('move', lastDir)
         }
     });
     sensor1.start();

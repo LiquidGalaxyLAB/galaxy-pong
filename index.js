@@ -115,7 +115,7 @@ io.on('connection', function (socket) {
     //console.log(msg)
   })
   socket.on("move", msg => {
-    io.emit('move', { player: controllers.indexOf(socket.id), dir: msg })
+    io.emit('move', { player: controllers.indexOf(socket.id), dir: msg.dir, speed:msg.speed })
   })
   socket.on("Goals", function (msg) {
     io.emit("Goals", msg)
