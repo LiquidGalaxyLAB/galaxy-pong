@@ -120,7 +120,9 @@ io.on('connection', function (socket) {
   socket.on("Goals", function (msg) {
     io.emit("Goals", msg)
   })
-
+  socket.on("pei", ()=>{
+    io.emit("pei")
+  })
   socket.on("maxPlayers", msg => {
     maxPlayers = msg;
     disconnectUnecessaryPlayers()

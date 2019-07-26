@@ -104,6 +104,11 @@ var Game = {
 		pong.menu();
 		pong.loop();
 
+		socket.on("pei", ()=>{
+			pei.play()
+			console.log("PEI")
+		})
+
 		//socket code////////////////////
 		socket.on('welcome', function (msg) {
 			screenNumber = msg.nScreen
@@ -345,7 +350,7 @@ var Game = {
 							pong.ball.moveY = DIRECTION.IDLE;
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 14;
-							pei.play();
+							socket.emit("pei")
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.meios[0][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.meios[0][0] / 100)) {
@@ -353,7 +358,7 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 17;
 							pong.ball.speedY = 12;
-							pei.play();
+							socket.emit("pei")
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.meios[1][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.meios[1][0] / 100)) {
@@ -362,7 +367,7 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 17;
 							pong.ball.speedY = 12;
-							pei.play();
+							socket.emit("pei")
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[0][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[0][0] / 100)) {
@@ -371,7 +376,7 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 25;
 							pong.ball.speedY = 25;
-							pei.play();
+							socket.emit("pei")
 						}
 						else if (pong.ball.y <= playerAt.y + playerAt.height * (playerAt.pontas[1][1] / 100)
 							&& pong.ball.y + pong.ball.height >= playerAt.y + playerAt.height * (playerAt.pontas[1][0] / 100)) {
@@ -380,9 +385,7 @@ var Game = {
 							pong.ball.moveX = playerAt.pushBall;
 							pong.ball.speedX = 25;
 							pong.ball.speedY = 25;
-							pei.play().catch(err=>{
-								console.log(err)
-							});
+							socket.emit("pei")
 						}
 					}
 				})
