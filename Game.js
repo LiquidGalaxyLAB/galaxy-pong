@@ -15,6 +15,21 @@ var fpsAnterior = 0;
 var showFPS = false;
 var playercount = 1
 var pei = new Audio('sounds/pei.mp3')
+var bSound = 0;
+
+a = new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+
+function beep(vol, freq, duration) {
+	v = a.createOscillator()
+	u = a.createGain()
+	v.connect(u)
+	v.frequency.value = freq
+	v.type = "square"
+	u.connect(a.destination)
+	u.gain.value = vol * 0.01
+	v.start(a.currentTime)
+	v.stop(a.currentTime + duration * 0.001)
+}
 // link vars
 
 ////////////////////////////v
@@ -104,9 +119,19 @@ var Game = {
 		pong.menu();
 		pong.loop();
 
-		socket.on("pei", ()=>{
-			pei.play()
-			console.log("PEI")
+		socket.on("pei", () => {
+			// pei.play().catch(err=>{
+			// 	console.log(err)
+			// })
+			// console.log("PEI")
+			if (bSound % 50 == 0 && bSound > 0)
+				pei.play().catch(err => { console.log(err) })
+			else if (bSound % 2 == 0)
+				beep(1, 250, 100);
+			else
+				beep(1, 100, 100);
+
+			bSound++
 		})
 
 		//socket code////////////////////
