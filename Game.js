@@ -414,8 +414,12 @@ var Game = {
 						}
 					}
 				})
-				if (this.player1.score == 10 || this.player2.score == 10) {
+				if (this.player1.score == 2 || this.player2.score == 2) {
 					this.over = true;
+					if (this.player1.score == 2)
+						socket.emit('lost', 2);
+					else if (this.player2.score == 2)
+						socket.emit('lost', 1);
 				}
 			}
 			else {

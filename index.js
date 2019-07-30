@@ -54,12 +54,10 @@ function disconnectUnecessaryPlayers() {
   var aux = []
   if (controllers.length > maxPlayers) {
     for (var i = maxPlayers; i < controllers.length; i++) {
-      if (controllers[i]) {
-        aux.push(controllers[i])
-        io.sockets.sockets[controllers[i]].disconnect();
-      }
+      aux.push(controllers[i])
     }
     aux.forEach((at) => {
+      io.emit('die', at)
       controllers.pop(at);
     })
   }
@@ -83,7 +81,7 @@ io.on('connection', function (socket) {
       socket.disconnect();
     else {
       controllers.push(socket.id)
-      socket.emit('welcome', controllers.indexOf(socket.id))
+      socket.emit('welcome', { num: controllers.indexOf(socket.id), id: socket.id })
     }
   }
   else {
@@ -115,12 +113,12 @@ io.on('connection', function (socket) {
     //console.log(msg)
   })
   socket.on("move", msg => {
-    io.emit('move', { player: controllers.indexOf(socket.id), dir: msg.dir, speed:msg.speed })
+    io.emit('move', { player: controllers.indexOf(socket.id), dir: msg.dir, speed: msg.speed })
   })
   socket.on("Goals", function (msg) {
     io.emit("Goals", msg)
   })
-  socket.on("pei", ()=>{
+  socket.on("pei", () => {
     io.emit("pei")
   })
   socket.on("maxPlayers", msg => {
@@ -143,7 +141,16 @@ io.on('connection', function (socket) {
   socket.on("GameOver", function () {
     io.emit("GameOver")
   })
-
+  socket.on('lost', msg => {
+    if (msg == 1) {
+      io.emit('lost', controllers[0])
+      io.emit('lost', controllers[2])
+    }
+    else if (msg == 2) {
+      io.emit('lost', controllers[1])
+      io.emit('lost', controllers[3])
+    }
+  })
   socket.on("AAAA", msg => {
     console.log(msg)
   })

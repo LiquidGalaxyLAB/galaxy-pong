@@ -3,9 +3,19 @@ var playerNum = -1;
 let txtTeam = document.getElementById('txtTeam')
 var pause = false;
 var fullSpeed = false;
+let titanic = new Audio('flautaTitanic.mp3')
+var cId = null;
+
+
+function playSound() {
+    titanic.play().catch((err)=>{
+        alert(err)
+    });
+}
 
 socket.on('welcome', msg => {
-    playerNum = msg;
+    playerNum = msg.num;
+    cId = msg.id;
 
     if (playerNum == 0 || playerNum == 2)
         txtTeam.innerHTML = 'Team Left'
@@ -17,6 +27,17 @@ socket.on('welcome', msg => {
 
 socket.on('pause', msg => {
     pause = msg
+})
+
+socket.on('lost', msg => {
+    if (msg == cId) {
+        playSound();
+    }
+})
+
+socket.on('die', msg => {
+    if (msg == cId)
+        socket.disconnect();
 })
 
 socket.on('disconnect', () => {
@@ -68,4 +89,3 @@ if (window.Accelerometer) {
 
 
 }
-
