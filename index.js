@@ -158,7 +158,9 @@ io.on('connection', function (socket) {
 
   socket.on('disconnect', function () {
     if (socket.handshake.query['type'] == 'controller')
-      console.log("AAAAA SAIU");
+    {
+      controllers.splice(controllers.indexOf(socket.id), 1)
+    }
     else {
       nScreens -= 1;
       if (nScreens == 0) {
@@ -180,5 +182,7 @@ io.on('connection', function (socket) {
   });
   //send to the last socket
 });
+
+
 
 module.exports = server;

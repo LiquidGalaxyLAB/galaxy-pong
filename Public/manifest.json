@@ -1,0 +1,12 @@
+{
+  "short_name": "LiquidGalaxy",
+  "name": "LiquidGalaxy",
+  "icons": [
+    {
+      "src": "testicon.jpeg",
+      "type": "image/jpeg",
+      "sizes": "48x48"
+    }
+  ],
+  "start_url": "/"
+}

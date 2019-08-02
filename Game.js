@@ -764,6 +764,8 @@ var Game = {
 		return random;
 	}
 }
+
+
 pong = Object.assign({}, Game);
 pong.initialize();
 
