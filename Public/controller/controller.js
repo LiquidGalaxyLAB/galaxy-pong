@@ -85,7 +85,7 @@ if (window.Accelerometer) {
         }
         lastDir.dir = actualDir
         lastDir.speed = Math.abs(e.target.y)
-        socket.emit('move', lastDir)
+        socket.emit('move', {dir: lastDir.dir, speed: lastDir.speed, playerNum: playerNum})
     });
     sensor1.start();
 
