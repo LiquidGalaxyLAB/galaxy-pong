@@ -119,6 +119,10 @@ var Game = {
 		pong.menu();
 		pong.loop();
 
+		socket.on("maxPlayers", msg=>{
+			playercount = msg
+		})
+
 		socket.on("pei", () => {
 			// pei.play().catch(err=>{
 			// 	console.log(err)

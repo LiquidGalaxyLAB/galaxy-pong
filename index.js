@@ -123,6 +123,7 @@ io.on('connection', function (socket) {
   })
   socket.on("maxPlayers", msg => {
     maxPlayers = msg;
+    io.emit("maxPlayers", msg)
     disconnectUnecessaryPlayers()
   })
 
