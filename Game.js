@@ -589,25 +589,25 @@ var Game = {
 
 			//keys for select player
 			if (key.keyCode == 49 || key.keyCode == 97) {
-				if ((!pong.running || pong.over) && !pause && screenNumber == 1) {
+				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
 					playercount = 1;
 					socket.emit("maxPlayers", playercount)
 				}
 			}
 			if (key.keyCode == 50 || key.keyCode == 98) {
-				if ((!pong.running || pong.over) && !pause && screenNumber == 1) {
+				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
 					playercount = 2;
 					socket.emit("maxPlayers", playercount)
 				}
 			}
 			if (key.keyCode == 51 || key.keyCode == 99) {
-				if ((!pong.running || pong.over) && !pause && screenNumber == 1) {
+				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
 					playercount = 3;
 					socket.emit("maxPlayers", playercount)
 				}
 			}
 			if (key.keyCode == 52 || key.keyCode == 100) {
-				if ((!pong.running || pong.over) && !pause && screenNumber == 1) {
+				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
 					playercount = 4;
 					socket.emit("maxPlayers", playercount)
 				}
