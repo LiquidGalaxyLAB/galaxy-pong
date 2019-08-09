@@ -119,7 +119,7 @@ var Game = {
 		pong.menu();
 		pong.loop();
 
-		socket.on("maxPlayers", msg=>{
+		socket.on("maxPlayers", msg => {
 			playercount = msg
 		})
 
@@ -308,18 +308,27 @@ var Game = {
 	},
 	update: function () {
 		//Set player count in the game
-		if (playercount == 1) {
+		if (playercount == 0) {
 			this.players = [this.player1, this.player2];
+			this.player2.IA = true;
+			this.player1.IA = true;
+		}
+		else if (playercount == 1) {
+			this.players = [this.player1, this.player2];
+			this.player1.IA = false;
 			this.player2.IA = true;
 		}
 		else if (playercount == 2) {
 			this.players = [this.player1, this.player2];
+			this.player1.IA = false;
 			this.player2.IA = false;
 		} else if (playercount == 3) {
 			this.players = [this.player1, this.player2, this.player3];
+			this.player1.IA = false;
 			this.player2.IA = false;
 		} else {
 			this.players = [this.player1, this.player2, this.player3, this.player4];
+			this.player1.IA = false;
 			this.player2.IA = false;
 		}
 		if (this.over) {
@@ -418,12 +427,18 @@ var Game = {
 						}
 					}
 				})
-				if (this.player1.score == 5 || this.player2.score == 5) {
-					this.over = true;
-					if (this.player1.score == 2)
-						socket.emit('lost', 2);
-					else if (this.player2.score == 2)
-						socket.emit('lost', 1);
+				if ((this.player1.score == 5 || this.player2.score == 5)) {
+					if (this.player1.IA && this.player2.IA) {
+						this.player1.score = 0;
+						this.player2.score = 0;
+					}
+					else {
+						this.over = true;
+						if (this.player1.score == 2)
+							socket.emit('lost', 2);
+						else if (this.player2.score == 2)
+							socket.emit('lost', 1);
+					}
 				}
 			}
 			else {
@@ -521,69 +536,71 @@ var Game = {
 		//listen the pressed keys
 		document.addEventListener('keydown', function (key) {
 			//keys for player 1
-			if (key.keyCode === 87) {
-				socket.emit('move', {dir: DIRECTION.UP, speed: 5, playerNum:0})
-				pong.player1.speed = 25
-			}
-			if (key.keyCode == 83) {
-				socket.emit('move', {dir: DIRECTION.DOWN, speed: 5, playerNum:0})
-				pong.player1.speed = 25
+			if (!pong.player1.IA) {
+				if (key.keyCode === 87) {
+					socket.emit('move', { dir: DIRECTION.UP, speed: 5, playerNum: 0 })
+					pong.player1.speed = 25
+				}
+				if (key.keyCode == 83) {
+					socket.emit('move', { dir: DIRECTION.DOWN, speed: 5, playerNum: 0 })
+					pong.player1.speed = 25
+				}
 			}
 
 			//keys for player 2
 			if (!pong.player2.IA) {
 				if (key.keyCode == 38) {
-					socket.emit('move', {dir: DIRECTION.UP, speed: 5, playerNum:1})
+					socket.emit('move', { dir: DIRECTION.UP, speed: 5, playerNum: 1 })
 					pong.player2.speed = 25
 				}
 				if (key.keyCode == 40) {
-					socket.emit('move', {dir: DIRECTION.DOWN, speed: 5, playerNum:1})
+					socket.emit('move', { dir: DIRECTION.DOWN, speed: 5, playerNum: 1 })
 					pong.player2.speed = 25
 				}
 			}
 			//keys for player 3
 			if (key.keyCode === 85) {
-				socket.emit('move', {dir: DIRECTION.UP, speed: 5, playerNum:2})
+				socket.emit('move', { dir: DIRECTION.UP, speed: 5, playerNum: 2 })
 				pong.player3.speed = 25
 			}
 			if (key.keyCode == 74) {
-				socket.emit('move', {dir: DIRECTION.DOWN, speed: 5, playerNum:2})
+				socket.emit('move', { dir: DIRECTION.DOWN, speed: 5, playerNum: 2 })
 				pong.player3.speed = 25
 			}
 
 			//keys for player 4
 			if (key.keyCode === 104) {
-				socket.emit('move', {dir: DIRECTION.UP, speed: 5, playerNum:3})
+				socket.emit('move', { dir: DIRECTION.UP, speed: 5, playerNum: 3 })
 				pong.player4.speed = 25
 			}
 			if (key.keyCode == 101) {
-				socket.emit('move', {dir: DIRECTION.DOWN, speed: 5, playerNum:3})
+				socket.emit('move', { dir: DIRECTION.DOWN, speed: 5, playerNum: 3 })
 				pong.player4.speed = 25
 			}
 
 			//keys for menu
 			if (key.keyCode == 80) { //Pause (P)
 				//if (screenNumber == 1) {
-					if (!pong.running && !pong.over && !pause) { }
-					else {
-						if (pong.running) {
-							pong.running = false;
-							pause = true;
-						}
-						else if (!pong.running) {
-							pong.running = true;
-							pause = false;
-						}
+				if (!pong.running && !pong.over && !pause) { }
+				else {
+					if (pong.running) {
+						pong.running = false;
+						pause = true;
 					}
-					socket.emit("pause", pause);
+					else if (!pong.running) {
+						pong.running = true;
+						pause = false;
+					}
+				}
+				socket.emit("pause", pause);
 				//}
 			}
 			if (key.keyCode == 32) {//Start (spacebar)
 				//if (screenNumber == 1) {
-					if (!pong.running || pong.over) {
-						pong.resetGame()
-						socket.emit("play")
-					}
+				if (!pong.running || pong.over) {
+					pong.resetGame()
+					socket.emit("play")
+				}
 				//}
 			}
 
@@ -592,6 +609,12 @@ var Game = {
 			}
 
 			//keys for select player
+			if (key.keyCode == 48 || key.keyCode == 96) {
+				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
+					playercount = 0;
+					socket.emit("maxPlayers", playercount)
+				}
+			}
 			if (key.keyCode == 49 || key.keyCode == 97) {
 				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
 					playercount = 1;
@@ -619,17 +642,17 @@ var Game = {
 		});
 
 		document.addEventListener('keyup', function (key) {
-			if (key.keyCode == 87 || key.keyCode == 83)
-				socket.emit('move', {dir: DIRECTION.IDLE, speed: 0, playerNum:0})
+			if (key.keyCode == 87 || key.keyCode == 83 && !pong.player1.IA)
+				socket.emit('move', { dir: DIRECTION.IDLE, speed: 0, playerNum: 0 })
 
 			if ((key.keyCode == 38 || key.keyCode == 40) && !pong.player2.IA)
-				socket.emit('move', {dir: DIRECTION.IDLE, speed: 0, playerNum:1})
+				socket.emit('move', { dir: DIRECTION.IDLE, speed: 0, playerNum: 1 })
 
 			if (key.keyCode == 85 || key.keyCode == 74)
-				socket.emit('move', {dir: DIRECTION.IDLE, speed: 0, playerNum:2})
+				socket.emit('move', { dir: DIRECTION.IDLE, speed: 0, playerNum: 2 })
 
 			if (key.keyCode == 104 || key.keyCode == 101)
-				socket.emit('move', {dir: DIRECTION.IDLE, speed: 0, playerNum:3})
+				socket.emit('move', { dir: DIRECTION.IDLE, speed: 0, playerNum: 3 })
 		});
 	},
 
@@ -667,6 +690,10 @@ var Game = {
 		if (pong.player2.IA) {
 			pong.player2.speed = 25
 			pong.player2.move = DIRECTION.DOWN;
+		}
+		if (pong.player1.IA) {
+			pong.player1.speed = 25
+			pong.player1.move = DIRECTION.DOWN;
 		}
 	},
 

@@ -158,8 +158,7 @@ io.on('connection', function (socket) {
   //io.emit('updateNScreens', {nScreens : nScreens , maxRes : maxRes})
 
   socket.on('disconnect', function () {
-    if (socket.handshake.query['type'] == 'controller')
-    {
+    if (socket.handshake.query['type'] == 'controller') {
       controllers.splice(controllers.indexOf(socket.id), 1)
     }
     else {
