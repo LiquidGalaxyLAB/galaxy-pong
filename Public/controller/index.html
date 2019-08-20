@@ -1,0 +1,56 @@
+<!doctype html>
+<iframe src="index.html" allow="autoplay" height=0 width=0>
+</iframe>
+  <html lang="en">
+
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Pong Controller</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="display-6" id="txtTeam">Team ...</h1>
+      <p class="lead">Move your phone up and down to move the paddle</p>
+      <div>
+        <img id="myImag" src="https://i.ibb.co/VxNLmKP/pong-App-Controller-idle.png" class="img-thumbnail"
+          alt="Responsive image">
+      </div>
+      <hr class="my-4">
+
+
+      <div class="d-flex justify-content-center">
+        <button id="btnIcon" style="width:80px;height:40px;" class="btn fa fa-pause btn-success "
+          onclick="onBtnPause();"></button>
+      </div>
+
+
+    </div>
+
+    <button type="button" onclick="playSound();">Click Me!</button>
+
+    <script>
+    if('serviceWorker' in navigator){
+    window.addEventListener('load', ()=>{
+        navigator.serviceWorker.register('sw.js')
+        .then(registration=>{
+            console.log(registration)
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+    })
+}
+    </script>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="controller.js"></script>
+
+  </html>
