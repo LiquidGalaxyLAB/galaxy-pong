@@ -27,17 +27,7 @@ sudo -v
 
 sudo npm install pm2@latest -g 2>>$HOME/pong.txt
 
-AT=$(pwd)
-
-if [ "$AT" == "/home/lg/galaxy-pong" ] ; then
-
-    pm2 start index.js --name PONG_PORT:8112 2>>$HOME/pong.txt
-
-elif [ "$AT" == "/home/lg" ]; then
-
-    pm2 start galaxy-pong/index.js --name PONG_PORT:8112 2>>$HOME/pong.txt
-
-fi
+pm2 start index.js --name PONG_PORT:8112 2>>$HOME/pong.txt
 
 pm2 save 2>>$HOME/pong.txt
 
