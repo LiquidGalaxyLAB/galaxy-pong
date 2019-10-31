@@ -33,11 +33,11 @@ echo $AT 2>>$HOME/pong.txt
 
 if [ $AT == "/home/lg/galaxy-pong" ] ; then
 
-    pm2 start index.js --name PONG 2>>$HOME/pong.txt
+    pm2 start index.js --name PONG_PORT:8112 2>>$HOME/pong.txt
 
 elif [ $AT == "/home/lg" ]; then
 
-    pm2 start /galaxy-pong/index.js --name PONG 2>>$HOME/pong.txt
+    pm2 start /galaxy-pong/index.js --name PONG_PORT:8112 2>>$HOME/pong.txt
 
 fi
 
