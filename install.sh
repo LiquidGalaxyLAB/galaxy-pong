@@ -19,13 +19,13 @@ https://github.com/LiquidGalaxyLAB/liquid-galaxy
 
 echo "Installing Pong" > $HOME/pong.txt
 
-# Initialize sudo access
+# Open port
 
-sudo -v
+LINHA=cat /etc/iptables.conf | grep "tcp" | grep "81" | awk -F " -j" '{print $1}'
+RESULT=$LINHA”,“8112
+sed -i “s/$LINHA/$RESULT/g” /etc/iptables.conf
 
 # Server
-
-sudo npm install pm2@latest -g 2>>$HOME/pong.txt
 
 pm2 start index.js --name PONG_PORT:8112 2>>$HOME/pong.txt
 
