@@ -1,29 +1,18 @@
-#!bin/bash
+#!/bin/bash
 
-echo -e "
+echo "Installing Galaxy Pong" >$HOME/pong.txt
 
-\e[34m _                 _              _
-\e[31m| |               |_|            | |
-\e[33m| |                              | |
-\e[32m|_|                              |_|\e[39m
+# Initialize sudo access
 
-https://github.com/LiquidGalaxy/liquid-galaxy
+sudo -v
 
-https://github.com/LiquidGalaxyLAB/liquid-galaxy
+# Open port 8080
 
--------------------------------------------------------------
+LINE=`cat /etc/iptables.conf | grep "tcp" | grep "81" | awk -F " -j" '{print $1}'`
 
-"
+RESULT=$LINE",8112"
 
-# Pong Installer #
-
-echo "Installing Pong" > $HOME/pong.txt
-
-# Open port
-
-LINHA=cat /etc/iptables.conf | grep "tcp" | grep "81" | awk -F " -j" '{print $1}'
-RESULT=$LINHA”,“8112
-sed -i “s/$LINHA/$RESULT/g” /etc/iptables.conf
+sed -i "s/$LINE/$RESULT/g" /etc/iptables.conf 2>>$HOME/pong.txt
 
 # Server
 
