@@ -8,11 +8,17 @@ sudo -v
 
 # Open port 8080
 
-LINE=`cat /etc/iptables.conf | grep "tcp" | grep "81" | awk -F " -j" '{print $1}'`
+LINE=`cat /etc/iptables.conf | grep "tcp" | grep " 81," | awk -F " -j" '{print $1}'`
 
 RESULT=$LINE",8112"
 
-sed -i "s/$LINE/$RESULT/g" /etc/iptables.conf 2>>$HOME/pong.txt
+DATA=`cat /etc/iptables.conf | grep "tcp" | grep " 81," | grep "8112"`
+
+if [ "$DATA" == "" ]; then
+    echo "Port already open"
+else
+    sed -i "s/$LINE/$RESULT/g" /etc/iptables.conf 2>>$HOME/pong.txt
+fi
 
 # Server
 
