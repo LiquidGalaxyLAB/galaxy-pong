@@ -15,9 +15,9 @@ RESULT=$LINE",8112"
 DATA=`cat /etc/iptables.conf | grep "tcp" | grep " 81," | grep "8112"`
 
 if [ "$DATA" == "" ]; then
-    echo "Port already open"
-else
     sed -i "s/$LINE/$RESULT/g" /etc/iptables.conf 2>>$HOME/pong.txt
+else
+    echo "Port already open"
 fi
 
 # Server
