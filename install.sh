@@ -20,6 +20,10 @@ else
     echo "Port already open"
 fi
 
+# Install all dependencies
+
+npm install
+
 # Server
 
 pm2 start index.js --name PONG_PORT:8112 2>>$HOME/pong.txt
