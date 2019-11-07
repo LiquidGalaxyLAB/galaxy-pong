@@ -6,7 +6,7 @@ echo "Installing Galaxy Pong" >$HOME/pong.txt
 
 sudo -v
 
-# Open port 8080
+# Open port 8112
 
 LINE=`cat /etc/iptables.conf | grep "tcp" | grep " 81" | awk -F " -j" '{print $1}'`
 
