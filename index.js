@@ -47,11 +47,6 @@ function client(id, screen, screenSize) {
   this.screenSize = screenSize;
 }
 
-function message(screen, nScreen) {
-  this.screen = screen;
-  this.nScreen = nScreen;
-}
-
 function disconnectUnecessaryPlayers() {
   var aux = []
   if (controllers.length > maxPlayers) {

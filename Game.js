@@ -30,21 +30,15 @@ function beep(vol, freq, duration) {
 	v.start(a.currentTime)
 	v.stop(a.currentTime + duration * 0.001)
 }
-// link vars
 
-////////////////////////////v
 var screenNumber;
 maxRes = screenRes;
-//
 
 if (window.addEventListener("gamepadconnected", function (e) {
 	console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
 		e.gamepad.index, e.gamepad.id,
 		e.gamepad.buttons.length, e.gamepad.axes.length);
 }))
-	console.log('aaaaaaaaaaaaaaaaaaaaaaaa')
-else
-	console.log('bbbbbbbbbbbbbbbbbb')
 
 window.onbeforeunload = function () {
 	socket.disconnect();
@@ -80,7 +74,7 @@ var Player = {
 		return {
 			id: numPaddle,
 			width: 50,
-			height: 200, //
+			height: 200, 
 			x: side === 'left' ? 50 : maxRes - 200,
 			y: canvas.height / 2 - 250,
 			speed: 25,
@@ -103,8 +97,8 @@ var Game = {
 		//initialize everything that needs to appear when the game is initialized
 		this.player1 = Player.new.call(this, 'left', 1);
 		this.player2 = Player.new.call(this, 'right', 2);
-		this.player3 = Player.new.call(this, 'left', 3); //
-		this.player4 = Player.new.call(this, 'right', 4); //
+		this.player3 = Player.new.call(this, 'left', 3); 
+		this.player4 = Player.new.call(this, 'right', 4); 
 
 		//change player3 and player4 position
 		this.player3.y = (this.player1.y + this.player1.height + 50);
@@ -124,10 +118,6 @@ var Game = {
 		})
 
 		socket.on("pei", () => {
-			// pei.play().catch(err=>{
-			// 	console.log(err)
-			// })
-			// console.log("PEI")
 			if (bSound % 50 == 0 && bSound > 0)
 				pei.play().catch(err => { console.log(err) })
 			else if (bSound % 2 == 0)
@@ -149,7 +139,7 @@ var Game = {
 			playerPosition = (maxRes) - 90;
 			playerPosition = (playerPosition - (screenRes * (screenNumber - 1)))
 			pong.player2.x = playerPosition;
-			pong.player4.x = playerPosition; //
+			pong.player4.x = playerPosition; 
 		});
 
 		socket.on("Goals", function (msg) {
@@ -189,7 +179,6 @@ var Game = {
 		});
 
 		socket.on("move", msg => {
-			console.log(msg)
 			if (msg.player == 0) {
 				if (msg.speed > 6)
 					pong.player1.speed = 80 * msg.speed / 10
@@ -261,7 +250,7 @@ var Game = {
 		var boxH = 100;
 		var boxX = canvas.width / 2 - (boxW / 2);
 		var boxY = canvas.height / 2 - 48;
-		//var bool = true;
+		
 		// Change the canvas font size
 		context.font = 'bold 50px Courier new';
 
@@ -282,11 +271,10 @@ var Game = {
 		else {
 
 			if (screenNumber == 1) {
-				context.fillText('Player count: ', boxX + 40, boxY) //
+				context.fillText('Player count: ', boxX + 40, boxY) 
 				context.fillStyle = '#FFFFFF';
 				context.fillStyle = '#06ba12';
-				context.fillText(playercount, boxX + 430, boxY) //
-				//setTimeout();
+				context.fillText(playercount, boxX + 430, boxY) 
 				context.fillStyle = '#06ba12';
 				context.fillText('SPACE TO START', boxX + 40, boxY + 60);
 			}
@@ -294,16 +282,6 @@ var Game = {
 				context.fillStyle = '#06ba12';
 				context.fillText('WAITING HOST', boxX + 40, boxY + 60);
 			}
-			/*setTimeout(function(){ 
-				if(!bool){
-					context.fillStyle = '#FFFFFF';
-					context.fillText(playercount,boxX + 410, boxY);
-					bool = false;
-				}else{
-					context.clearRect(boxX + 410, boxY,50,50)
-				}
-				
-			}, 3000)*/
 		}
 	},
 	update: function () {
@@ -463,8 +441,6 @@ var Game = {
 		//set the color of the fillStyle to white
 		context.fillStyle = '#FFFFFF';
 
-		////////
-
 		this.players.forEach(function (playerAt) {
 			if (playerAt.id % 2 != 0) {
 				if (screenNumber == 1) {
@@ -580,7 +556,7 @@ var Game = {
 
 			//keys for menu
 			if (key.keyCode == 80) { //Pause (P)
-				//if (screenNumber == 1) {
+				
 				if (!pong.running && !pong.over && !pause) { }
 				else {
 					if (pong.running) {
@@ -593,15 +569,15 @@ var Game = {
 					}
 				}
 				socket.emit("pause", pause);
-				//}
+				
 			}
 			if (key.keyCode == 32) {//Start (spacebar)
-				//if (screenNumber == 1) {
+				
 				if (!pong.running || pong.over) {
 					pong.resetGame()
 					socket.emit("play")
 				}
-				//}
+				
 			}
 
 			if (key.keyCode == 70) {//Show FPS
@@ -610,31 +586,31 @@ var Game = {
 
 			//keys for select player
 			if (key.keyCode == 48 || key.keyCode == 96) {
-				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
+				if ((!pong.running || pong.over) && !pause) {
 					playercount = 0;
 					socket.emit("maxPlayers", playercount)
 				}
 			}
 			if (key.keyCode == 49 || key.keyCode == 97) {
-				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
+				if ((!pong.running || pong.over) && !pause) {
 					playercount = 1;
 					socket.emit("maxPlayers", playercount)
 				}
 			}
 			if (key.keyCode == 50 || key.keyCode == 98) {
-				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
+				if ((!pong.running || pong.over) && !pause) {
 					playercount = 2;
 					socket.emit("maxPlayers", playercount)
 				}
 			}
 			if (key.keyCode == 51 || key.keyCode == 99) {
-				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
+				if ((!pong.running || pong.over) && !pause) {
 					playercount = 3;
 					socket.emit("maxPlayers", playercount)
 				}
 			}
 			if (key.keyCode == 52 || key.keyCode == 100) {
-				if ((!pong.running || pong.over) && !pause /*&& screenNumber == 1*/) {
+				if ((!pong.running || pong.over) && !pause) {
 					playercount = 4;
 					socket.emit("maxPlayers", playercount)
 				}

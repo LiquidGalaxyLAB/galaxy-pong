@@ -30,25 +30,7 @@
         <button id="btnIcon" style="width:80px;height:40px;" class="btn fa fa-pause btn-success "
           onclick="onBtnPause();"></button>
       </div>
-
-
     </div>
-
-    <button type="button" onclick="playSound();">Click Me!</button>
-
-    <script>
-    if('serviceWorker' in navigator){
-    window.addEventListener('load', ()=>{
-        navigator.serviceWorker.register('sw.js')
-        .then(registration=>{
-            console.log(registration)
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-    })
-}
-    </script>
   </body>
   <script src="/socket.io/socket.io.js"></script>
   <script src="controller.js"></script>
