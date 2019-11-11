@@ -1,17 +1,8 @@
 const fs = require('fs')
 const express = require('express')
 const app = express()
+var https = require('https')
 
-var httpOptions = {
-  key: fs.readFileSync("keys/privateKey.key"),
-  cert: fs.readFileSync("keys/certificate.crt"),
-  passphrase: 'batatinha'
-}
-
-const server = require('https').createServer(httpOptions, app).listen(8112, () => {
-  console.log("Listening to port 8112")
-});
-const io = require('socket.io')(server);
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + "/index.html");
@@ -20,6 +11,17 @@ app.get('/Game.js', (req, res) => {
   res.sendFile(__dirname + "/Game.js");
 })
 
+
+var server = https.createServer({
+	key:fs.readFileSync('server.key'),
+	cert:fs.readFileSync('server.cert')
+}, app)
+
+server.listen(8112, () => {
+	console.log('Listen on port 8112!')
+})
+
+const io = require('socket.io').listen(server);
 
 var maxRes = 0
 var ballX = 0;
@@ -88,11 +90,6 @@ io.on('connection', function (socket) {
     if (nScreens == 0)
       maxPlayers = 1;
     nScreens += 1;
-    //catch name for url
-    // console.log("id",url.parse(socket.handshake.headers.referer))
-    // console.log("screen conected number: ", nScreens, socket.id);
-    //tudo o mundo
-
 
     //welcome process
     socket.emit("welcome", { nScreen: nScreens, nScreens: nScreens, ballX: ballX, ballY: ballY })
@@ -110,7 +107,6 @@ io.on('connection', function (socket) {
     ballX = msg.ballX
     ballY = msg.ballY
     io.emit("updateData", msg)
-    //console.log(msg)
   })
   socket.on("move", msg => {
     io.emit('move', { player: msg.playerNum, dir: msg.dir, speed: msg.speed })
@@ -155,7 +151,6 @@ io.on('connection', function (socket) {
   socket.on("AAAA", msg => {
     console.log(msg)
   })
-  //io.emit('updateNScreens', {nScreens : nScreens , maxRes : maxRes})
 
   socket.on('disconnect', function () {
     if (socket.handshake.query['type'] == 'controller') {
@@ -185,4 +180,3 @@ io.on('connection', function (socket) {
 
 
 
-module.exports = server;
