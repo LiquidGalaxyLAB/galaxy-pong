@@ -6,9 +6,6 @@ var fullSpeed = false;
 let titanic = new Audio('flautaTitanic.mp3')
 var cId = null;
 
-
-
-
 function playSound() {
     titanic.play().catch((err) => {
         alert(err)
