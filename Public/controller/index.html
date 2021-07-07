@@ -18,9 +18,13 @@
   <body>
     <div class="container">
       <h1 class="display-6" id="txtTeam">Team ...</h1>
-      <p class="lead">Move your phone up and down to move the paddle</p>
-      <div>
-        <img id="myImag" src="https://i.ibb.co/VxNLmKP/pong-App-Controller-idle.png" class="img-thumbnail"
+      <p class="lead">Click on the arrow corresponding to the desired direction</p>
+      <div class="d-flex justify-content-around">
+        <img onclick="onArrowUp();" id="upArrow" style="max-height: 300px;" src="https://i.ibb.co/fpVq8dc/pong-App-Controller-up.png" class="img-thumbnail"
+          alt="Responsive image">
+          <img onclick="onIdle();" id="idleImage" style="max-height: 300px;" src="https://i.ibb.co/VxNLmKP/pong-App-Controller-idle.png" class="img-thumbnail"
+          alt="Responsive image">
+          <img onclick="onArrowDown();" id="downArrow" style="max-height: 300px;" src="https://i.ibb.co/0Zt0pSL/pong-App-Controller-down.png" class="img-thumbnail"
           alt="Responsive image">
       </div>
       <hr class="my-4">

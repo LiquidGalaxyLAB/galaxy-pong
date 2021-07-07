@@ -62,29 +62,23 @@ function onBtnPause() {
         document.getElementById("btnIcon").className = "btn fa fa-play btn-success"
 }
 
-let accelerometerText = document.getElementById('accelerometerText');
+function onArrowUp() {
+    actualDir = DIRECTION.UP
+    this.setDirection()
+}
 
-if (window.Accelerometer) {
-    let sensor1 = new Accelerometer();
-    var actualDir
-    sensor1.addEventListener('reading', function (e) {
-        if (e.target.y > 1) {
-            actualDir = DIRECTION.UP
-            document.getElementById('myImag').src = "https://i.ibb.co/fpVq8dc/pong-App-Controller-up.png"
-        }
-        else if (e.target.y < -1) {
-            actualDir = DIRECTION.DOWN
-            document.getElementById('myImag').src = "https://i.ibb.co/0Zt0pSL/pong-App-Controller-down.png"
-        }
-        else {
-            actualDir = DIRECTION.IDLE
-            document.getElementById('myImag').src = "https://i.ibb.co/VxNLmKP/pong-App-Controller-idle.png"
-        }
-        lastDir.dir = actualDir
-        lastDir.speed = Math.abs(e.target.y)
-        socket.emit('move', {dir: lastDir.dir, speed: lastDir.speed, playerNum: playerNum})
-    });
-    sensor1.start();
+function onArrowDown() {
+    actualDir = DIRECTION.DOWN
+    this.setDirection()
+}
 
+function onIdle() {
+    actualDir = DIRECTION.IDLE
+    this.setDirection()
+}
 
+function setDirection() {
+    lastDir.dir = actualDir
+    lastDir.speed = 4
+    socket.emit('move', {dir: lastDir.dir, speed: lastDir.speed, playerNum: playerNum})
 }

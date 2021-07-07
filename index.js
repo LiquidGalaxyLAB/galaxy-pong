@@ -1,7 +1,7 @@
 const fs = require('fs')
 const express = require('express')
 const app = express()
-var https = require('https')
+var http = require('http').createServer(app);
 
 
 app.get('/', (req, res) => {
@@ -11,17 +11,11 @@ app.get('/Game.js', (req, res) => {
   res.sendFile(__dirname + "/Game.js");
 })
 
-
-var server = https.createServer({
-	key:fs.readFileSync('server.key'),
-	cert:fs.readFileSync('server.cert')
-}, app)
-
-server.listen(8112, () => {
+http.listen(8112, () => {
 	console.log('Listen on port 8112!')
 })
 
-const io = require('socket.io').listen(server);
+const io = require('socket.io').listen(http);
 
 var maxRes = 0
 var ballX = 0;
@@ -104,6 +98,7 @@ io.on('connection', function (socket) {
     io.emit("updateData", msg)
   })
   socket.on("move", msg => {
+    console.log('move', msg)
     io.emit('move', { player: msg.playerNum, dir: msg.dir, speed: msg.speed })
   })
   socket.on("Goals", function (msg) {
