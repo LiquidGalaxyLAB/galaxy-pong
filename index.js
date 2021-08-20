@@ -15,7 +15,7 @@ http.listen(8112, () => {
 	console.log('Listen on port 8112!')
 })
 
-const io = require('socket.io').listen(http);
+const io = require('socket.io')(http);
 
 var maxRes = 0
 var ballX = 0;

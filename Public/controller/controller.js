@@ -51,7 +51,28 @@ var DIRECTION = {
     RIGHT: 4
 };
 
+var options = {
+    color: "blue",
+    zone: document.getElementById('zone_joystick'),
+}
+
 var lastDir = { dir: DIRECTION.IDLE, speed: false };
+
+createNipple();
+
+function createNipple() {
+	var manager = nipplejs.create(options);
+	manager.on("dir", function (evt, data) {
+		var direction = data.direction;
+		if(direction.angle == "up") {
+            actualDir = DIRECTION.UP
+            setDirection()
+		} else if(direction.angle == "down") {
+            actualDir = DIRECTION.DOWN
+            setDirection()
+		}
+	})
+}
 
 function onBtnPause() {
     socket.emit('pause', pause = !pause);
@@ -60,16 +81,6 @@ function onBtnPause() {
     }
     else
         document.getElementById("btnIcon").className = "btn fa fa-play btn-success"
-}
-
-function onArrowUp() {
-    actualDir = DIRECTION.UP
-    this.setDirection()
-}
-
-function onArrowDown() {
-    actualDir = DIRECTION.DOWN
-    this.setDirection()
 }
 
 function onIdle() {
