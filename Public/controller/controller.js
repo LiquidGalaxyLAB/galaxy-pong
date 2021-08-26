@@ -53,7 +53,9 @@ var DIRECTION = {
 
 var options = {
     color: "blue",
-    zone: document.getElementById('zone_joystick'),
+    zone: document.querySelector('.zone'),
+    mode: "static",
+    position: { left: "50%", top: "50%"}
 }
 
 var lastDir = { dir: DIRECTION.IDLE, speed: false };

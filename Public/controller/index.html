@@ -1,6 +1,6 @@
 <!doctype html>
-<iframe src="index.html" allow="autoplay" height=0 width=0>
-</iframe>
+<!-- <iframe src="index.html" allow="autoplay" height=0 width=0>
+</iframe> -->
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -14,20 +14,40 @@
     <link rel="manifest" href="./manifest.json">
     <title>Pong Controller</title>
     <style>
-      #zone_joystick {
-				position: absolute;
+      .zone {
+        position: absolute;
 				width: 100%;
-				height: 100vh;
-				background-color: rgba(0, 0, 255, 0.1);
-			}
+				height: 100%;
+        left: 0;
+      }
+
+      .jumbotron {
+        width: 100%;
+        z-index: 9999;
+        background-color: #fff;
+      }
+
+      .noselect {
+        -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none; /* Safari */
+          -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+              -ms-user-select: none; /* Internet Explorer/Edge */
+                  user-select: none; /* Non-prefixed version, currently
+                                        supported by Chrome, Edge, Opera and Firefox */
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1 class="display-6" id="txtTeam">Team ...</h1>
-      <p class="lead">Move with the joystick</p>
-    </div>
-    <div id="zone_joystick"></div>
+		<div class="container-fluid">
+      <div class="row">
+        <div class="jumbotron noselect">
+          <h1 class="display-6" id="txtTeam">Team ...</h1>
+          <p class="lead">Move with the joystick</p>
+        </div>
+      <div class="zone"></div>
+      </div>
+		</div>
   </body>
   <script src="/socket.io/socket.io.js"></script>
   <script src="./nipplejs.min.js"></script>
