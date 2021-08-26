@@ -75,6 +75,11 @@ function createNipple() {
             setDirection()
 		}
 	})
+
+    manager.on("end", () => {
+        actualDir = DIRECTION.IDLE
+        setDirection()
+    })
 }
 
 function onBtnPause() {
