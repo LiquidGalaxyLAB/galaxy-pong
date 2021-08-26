@@ -55,7 +55,8 @@ var options = {
     color: "blue",
     zone: document.querySelector('.zone'),
     mode: "static",
-    position: { left: "50%", top: "50%"}
+    position: { left: "50%", top: "50%"},
+    lockY: true
 }
 
 var lastDir = { dir: DIRECTION.IDLE, speed: false };
