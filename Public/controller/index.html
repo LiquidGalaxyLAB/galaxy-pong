@@ -14,6 +14,14 @@
     <link rel="manifest" href="./manifest.json">
     <title>Pong Controller</title>
     <style>
+      html, body {
+        touch-action: none;
+        -webkit-overflow-scrolling: none;
+        overflow: hidden;
+        /* Other browsers */
+        overscroll-behavior: none;
+      }
+      
       .zone {
         position: absolute;
 				width: 100%;
@@ -49,7 +57,7 @@
           <h1 class="display-6" id="txtTeam">Team ...</h1>
           <p class="lead">Move with the joystick</p>
         </div>
-      <div class="zone"></div>
+      <div class="zone noselect"></div>
       </div>
 		</div>
   </body>
