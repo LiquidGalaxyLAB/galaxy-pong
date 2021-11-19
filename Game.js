@@ -19,17 +19,6 @@ var bSound = 0;
 
 a = new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
 
-// Start of LG Connection
-const galaxyPort = 5433
-const ip = 'lg1'
-const lgSocket = io(`http://${ip}:${galaxyPort}`)
-lgSocket.on("reset", () => {
-    const url = window.location.href
-    const num = url.substring(url.length)
-    window.location.href = `http://${ip}:${galaxyPort}/galaxy/basic/screensaver?num=${num}`
-})
-// End of LG Connection
-
 function beep(vol, freq, duration) {
 	v = a.createOscillator()
 	u = a.createGain()
